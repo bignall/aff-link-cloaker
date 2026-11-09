@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name:       Affiliate Link Cloaker
- * Description:       Import offers from affiliate networks (starting with WarriorPlus) and turn them into short, cloaked, trackable redirect links you can use on this site or anywhere else.
- * Version:           0.1.0
- * Requires at least: 6.0
- * Requires PHP:      7.4
+ * Description:       Import your approved affiliate offers (WarriorPlus first) and turn them into short, cloaked, trackable redirect links you can use on this site or anywhere else.
+ * Version:           0.2.0
+ * Requires at least: 6.4
+ * Requires PHP:      8.1
  * Author:            Arbe
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -15,24 +15,32 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'ALC_VERSION', '0.1.0' );
+// Keep this file PHP 5.6-compatible so old hosts get a notice instead of a parse error.
+if ( version_compare( PHP_VERSION, '8.1', '<' ) ) {
+	add_action(
+		'admin_notices',
+		function () {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Affiliate Link Cloaker requires PHP 8.1 or newer.', 'aff-link-cloaker' ) . '</p></div>';
+		}
+	);
+	return;
+}
+
+if ( ! file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	add_action(
+		'admin_notices',
+		function () {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Affiliate Link Cloaker is missing its dependencies. Run "composer install" in the plugin folder, or install a release zip.', 'aff-link-cloaker' ) . '</p></div>';
+		}
+	);
+	return;
+}
+
+if ( file_exists( __DIR__ . '/vendor-prefixed/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor-prefixed/autoload.php';
+}
+require_once __DIR__ . '/vendor/autoload.php';
+
 define( 'ALC_FILE', __FILE__ );
-define( 'ALC_DIR', plugin_dir_path( __FILE__ ) );
-define( 'ALC_URL', plugin_dir_url( __FILE__ ) );
 
-require_once ALC_DIR . 'includes/class-alc-settings.php';
-require_once ALC_DIR . 'includes/class-alc-clicks.php';
-require_once ALC_DIR . 'includes/class-alc-post-type.php';
-require_once ALC_DIR . 'includes/class-alc-redirector.php';
-require_once ALC_DIR . 'includes/class-alc-shortcode.php';
-require_once ALC_DIR . 'includes/class-alc-importer.php';
-require_once ALC_DIR . 'includes/class-alc-admin.php';
-require_once ALC_DIR . 'includes/sources/interface-alc-source.php';
-require_once ALC_DIR . 'includes/sources/class-alc-source-registry.php';
-require_once ALC_DIR . 'includes/sources/class-alc-warriorplus-source.php';
-require_once ALC_DIR . 'includes/class-alc-plugin.php';
-
-register_activation_hook( __FILE__, array( 'ALC_Plugin', 'activate' ) );
-register_deactivation_hook( __FILE__, array( 'ALC_Plugin', 'deactivate' ) );
-
-add_action( 'plugins_loaded', array( 'ALC_Plugin', 'instance' ) );
+AffLinkCloaker\Bootstrap::plugin( __FILE__ )->boot();

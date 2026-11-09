@@ -14,10 +14,19 @@
 		if ( navigator.clipboard && window.isSecureContext ) {
 			navigator.clipboard.writeText( url ).then( done );
 		} else {
-			var input = btn.parentNode.querySelector( 'input' );
-			input.select();
+			btn.parentNode.querySelector( 'input' ).select();
 			document.execCommand( 'copy' );
 			done();
 		}
+	} );
+
+	document.addEventListener( 'change', function ( e ) {
+		if ( ! e.target.classList.contains( 'alc-check-all' ) ) {
+			return;
+		}
+		var table = e.target.closest( 'table' );
+		table.querySelectorAll( 'tbody input[type=checkbox]' ).forEach( function ( box ) {
+			box.checked = e.target.checked;
+		} );
 	} );
 } )();

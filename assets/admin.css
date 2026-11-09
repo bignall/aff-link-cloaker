@@ -1,7 +1,11 @@
 .alc-copy { display: inline-flex; gap: 4px; align-items: center; max-width: 100%; }
-.alc-copy input { font-family: monospace; font-size: 12px; }
-.column-alc_url .alc-copy input { width: 260px; }
-.alc-form .alc-inline { margin: 0 6px 0 12px; }
+.alc-copy input { font-family: monospace; font-size: 12px; width: 260px; max-width: 100%; }
 .alc-preview { max-width: 240px; height: auto; border: 1px solid #dcdcde; }
 .alc-warn { color: #b32d2e; }
 .alc-results { list-style: disc; margin-left: 20px; }
+.alc-badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; line-height: 18px; font-weight: 600; }
+.alc-badge-ok { background: #edfaef; color: #00701a; }
+.alc-badge-dead { background: #fcf0f1; color: #b32d2e; }
+.alc-toolbar { clear: both; display: flex; gap: 8px; align-items: center; margin: 8px 0 12px; }
+.alc-offers .alc-col-wide { width: 34%; }
+.alc-import-options { display: flex; gap: 16px; align-items: center; }
