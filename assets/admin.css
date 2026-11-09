@@ -1,0 +1,7 @@
+.alc-copy { display: inline-flex; gap: 4px; align-items: center; max-width: 100%; }
+.alc-copy input { font-family: monospace; font-size: 12px; }
+.column-alc_url .alc-copy input { width: 260px; }
+.alc-form .alc-inline { margin: 0 6px 0 12px; }
+.alc-preview { max-width: 240px; height: auto; border: 1px solid #dcdcde; }
+.alc-warn { color: #b32d2e; }
+.alc-results { list-style: disc; margin-left: 20px; }
