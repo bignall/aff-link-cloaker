@@ -1,0 +1,70 @@
+name: Release
+
+# Push a tag like v0.2.1 to build the plugin zip and publish a GitHub release with it attached.
+# The tag must match the "Version:" header in aff-link-cloaker.php.
+# Release notes come from release-notes/<tag>.md if it exists, otherwise from the commit history.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          tools: composer:v2
+          coverage: none
+
+      - name: Check tag matches plugin version
+        id: version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="$(sed -n 's/^ \* Version: *//p' aff-link-cloaker.php | tr -d '[:space:]')"
+          if [ "v${VERSION}" != "${TAG}" ]; then
+            echo "::error::Tag ${TAG} does not match plugin Version: ${VERSION} in aff-link-cloaker.php"
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Build zip
+        run: bin/build-zip.sh
+
+      - name: Smoke-check the zip
+        run: |
+          ZIP="dist/aff-link-cloaker-${{ steps.version.outputs.version }}.zip"
+          unzip -tq "$ZIP"
+          for f in aff-link-cloaker.php vendor/autoload.php vendor-prefixed/autoload.php src/Bootstrap.php; do
+            unzip -l "$ZIP" "aff-link-cloaker/$f" > /dev/null || { echo "::error::Missing $f in zip"; exit 1; }
+          done
+          mkdir -p /tmp/check && unzip -q "$ZIP" -d /tmp/check
+          find /tmp/check -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          ZIP="dist/aff-link-cloaker-${{ steps.version.outputs.version }}.zip"
+          NOTES=(--generate-notes)
+          if [ -f "release-notes/${TAG}.md" ]; then
+            NOTES=(--notes-file "release-notes/${TAG}.md")
+          fi
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            # Release already exists (e.g. created by hand): just (re)attach the zip.
+            gh release upload "$TAG" "$ZIP" --clobber
+          else
+            gh release create "$TAG" "$ZIP" --verify-tag --title "${TAG}" "${NOTES[@]}"
+          fi

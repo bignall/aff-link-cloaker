@@ -51,6 +51,10 @@ Pull your approved affiliate offers from WarriorPlus and turn them into short, c
     composer install          # also prefixes WP Foundation into vendor-prefixed/ with Strauss
     bin/build-zip.sh          # release zip in dist/, without dev tools
 
+To release: bump "Version:" in aff-link-cloaker.php and "Stable tag:" here, optionally add
+release-notes/vX.Y.Z.md, commit, then push a tag `vX.Y.Z`. The Release workflow builds the zip
+and publishes a GitHub release with it attached.
+
 Strauss rewrites `use Bignall\WPFoundation\...` in src/ to `AffLinkCloaker\Vendor\Bignall\WPFoundation\...`; that's expected and committed.
 
 == Changelog ==
