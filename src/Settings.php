@@ -126,8 +126,7 @@ final class Settings {
 		$old_prefix = is_array( $old ) ? ( $old['prefix'] ?? '' ) : '';
 		$new_prefix = is_array( $new ) ? ( $new['prefix'] ?? '' ) : '';
 		if ( $old_prefix !== $new_prefix && self::$plugin ) {
-			// WP Foundation's RewriteTask flushes on the next `init` when this flag is set.
-			update_option( self::$plugin->optionName( 'flush_rewrite_rules' ), 1, false );
+			self::$plugin->requestRewriteFlush();
 		}
 		if ( is_array( $old ) && is_array( $new ) && ( $old['wp_api_key'] ?? '' ) !== ( $new['wp_api_key'] ?? '' ) ) {
 			Sources\WarriorPlus\WarriorPlusSource::forgetCache();

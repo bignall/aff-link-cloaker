@@ -302,7 +302,7 @@ final class ImportPage {
 		self::guard( 'alc_sync_now' );
 		$r = Sync::run();
 		if ( $r['errors'] ) {
-			Notices::flash( 'error', __( 'Sync failed:', 'aff-link-cloaker' ), array_map( 'esc_html', $r['errors'] ) );
+			Notices::flash( 'error', __( 'Sync failed:', 'aff-link-cloaker' ), $r['errors'] );
 		} else {
 			/* translators: 1: links checked, 2: links that can't earn */
 			Notices::flash( 'success', sprintf( __( 'Sync finished: %1$d links checked, %2$d point to offers you can no longer earn from.', 'aff-link-cloaker' ), $r['updated'] + $r['created'], $r['dead'] ) );
@@ -318,11 +318,11 @@ final class ImportPage {
 		foreach ( $results as [ $offer, $r ] ) {
 			$label = '' !== $offer->name ? $offer->name : $offer->affiliateUrl;
 			if ( is_wp_error( $r ) ) {
-				$bad[] = '<strong>' . esc_html( $label ) . '</strong> – ' . esc_html( $r->get_error_message() );
+				$bad[] = $label . ' – ' . $r->get_error_message();
 				continue;
 			}
 			$cloaked = 'publish' === get_post_status( $r['post_id'] ) ? Links::cloakedUrl( $r['post_id'] ) : __( '(draft)', 'aff-link-cloaker' );
-			$ok[]    = sprintf( '<a href="%s">%s</a> → <code>%s</code>', esc_url( (string) get_edit_post_link( $r['post_id'] ) ), esc_html( get_the_title( $r['post_id'] ) ), esc_html( $cloaked ) );
+			$ok[]    = html_entity_decode( get_the_title( $r['post_id'] ), ENT_QUOTES, 'UTF-8' ) . ' → ' . $cloaked;
 		}
 		if ( $ok ) {
 			/* translators: %d: count */

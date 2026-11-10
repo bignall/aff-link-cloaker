@@ -1,6 +1,6 @@
 <?php
 /**
- * One-shot admin notices that survive a redirect (post/redirect/get).
+ * Admin notices: one-shot flash messages (via WP Foundation) and standing health warnings.
  *
  * @package AffLinkCloaker
  */
@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace AffLinkCloaker\Admin;
 
+use AffLinkCloaker\App;
 use AffLinkCloaker\Links;
 use AffLinkCloaker\Settings;
 use AffLinkCloaker\Sync;
@@ -16,49 +17,22 @@ use AffLinkCloaker\Sync;
 final class Notices {
 
 	public static function init(): void {
-		add_action( 'admin_notices', array( self::class, 'render' ) );
-	}
-
-	private static function key(): string {
-		return 'alc_flash_' . get_current_user_id();
+		add_action( 'admin_notices', array( self::class, 'renderHealth' ) );
 	}
 
 	/**
-	 * Queue a notice for the next admin page load.
+	 * Queue a notice for the current user's next admin page (WP Foundation flash notices).
 	 *
 	 * @param string       $type    success, warning, error or info.
 	 * @param string       $message Plain text.
-	 * @param list<string> $items   Optional list items (may contain safe HTML from esc_* calls).
+	 * @param list<string> $items   Optional plain-text list items.
 	 */
 	public static function flash( string $type, string $message, array $items = array() ): void {
-		$queue   = get_transient( self::key() );
-		$queue   = is_array( $queue ) ? $queue : array();
-		$queue[] = compact( 'type', 'message', 'items' );
-		set_transient( self::key(), $queue, 5 * MINUTE_IN_SECONDS );
-	}
-
-	public static function render(): void {
-		$queue = get_transient( self::key() );
-		if ( is_array( $queue ) ) {
-			delete_transient( self::key() );
-			foreach ( $queue as $n ) {
-				printf( '<div class="notice notice-%s is-dismissible"><p>%s</p>', esc_attr( $n['type'] ), esc_html( $n['message'] ) );
-				if ( $n['items'] ) {
-					echo '<ul class="alc-results">';
-					foreach ( $n['items'] as $item ) {
-						echo '<li>' . wp_kses_post( $item ) . '</li>';
-					}
-					echo '</ul>';
-				}
-				echo '</div>';
-			}
-		}
-
-		self::renderHealth();
+		App::instance()->plugin->notices()->flash( $type, $message, $items );
 	}
 
 	/** Standing warnings on the plugin's own screens. */
-	private static function renderHealth(): void {
+	public static function renderHealth(): void {
 		$screen = get_current_screen();
 		if ( ! $screen || Links::POST_TYPE !== $screen->post_type || ! current_user_can( 'edit_posts' ) ) {
 			return;

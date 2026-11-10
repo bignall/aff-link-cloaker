@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "bignall/wp-foundation",
-            "version": "v0.1.1",
+            "version": "0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bignall/wp-foundation.git",
-                "reference": "cbf244d75eaacc0a2d048f3f6d7e3027eb6f0f20"
+                "reference": "1b889fde639058d099387970910c7106d2017497"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bignall/wp-foundation/zipball/cbf244d75eaacc0a2d048f3f6d7e3027eb6f0f20",
-                "reference": "cbf244d75eaacc0a2d048f3f6d7e3027eb6f0f20",
+                "url": "https://api.github.com/repos/bignall/wp-foundation/zipball/1b889fde639058d099387970910c7106d2017497",
+                "reference": "1b889fde639058d099387970910c7106d2017497",
                 "shasum": ""
             },
             "require": {
@@ -50,6 +50,7 @@
                 }
             ],
             "description": "Lifecycle framework for WordPress plugins: requirement checks, activation, deactivation, upgrades and migrations, uninstall, multisite and deactivation feedback.",
+            "homepage": "https://bignall.github.io/wp-foundation/",
             "keywords": [
                 "activation",
                 "deactivation",
@@ -62,9 +63,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bignall/wp-foundation/issues",
-                "source": "https://github.com/bignall/wp-foundation/tree/v0.1.1"
+                "source": "https://github.com/bignall/wp-foundation/tree/0.1.2"
             },
-            "time": "2026-11-09T03:28:11+00:00"
+            "time": "2026-11-09T23:02:23+00:00"
         }
     ],
     "packages-dev": [
