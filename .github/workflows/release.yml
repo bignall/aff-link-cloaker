@@ -3,6 +3,7 @@ name: Release
 # Push a tag like v0.2.1 to build the plugin zip and publish a GitHub release with it attached.
 # The tag must match the "Version:" header in aff-link-cloaker.php.
 # Release notes come from release-notes/<tag>.md if it exists, otherwise from the commit history.
+# If that file starts with a "# Heading" line, the heading is the release title; otherwise the tag is.
 
 on:
   push:
@@ -58,13 +59,21 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME}"
           ZIP="dist/aff-link-cloaker-${{ steps.version.outputs.version }}.zip"
-          NOTES=(--generate-notes)
-          if [ -f "release-notes/${TAG}.md" ]; then
-            NOTES=(--notes-file "release-notes/${TAG}.md")
-          fi
+          # Title from the notes file's "# Heading" (else the tag); body is the rest of the file.
+          BODY="${RUNNER_TEMP}/release-notes.md"
+          set +e
+          TITLE="$(bin/release-notes.sh "$TAG" "$BODY")"
+          STATUS=$?
+          set -e
+          case "$STATUS" in
+            0) NOTES=(--notes-file "$BODY") ;;
+            3) TITLE="$TAG"; NOTES=(--generate-notes) ;;
+            *) echo "::error::Could not read release-notes/${TAG}.md"; exit 1 ;;
+          esac
+          echo "Release title: ${TITLE}"
           if gh release view "$TAG" > /dev/null 2>&1; then
-            # Release already exists (e.g. created by hand): just (re)attach the zip.
+            # Release already exists (e.g. created by hand): keep its title and notes, (re)attach the zip.
             gh release upload "$TAG" "$ZIP" --clobber
           else
-            gh release create "$TAG" "$ZIP" --verify-tag --title "${TAG}" "${NOTES[@]}"
+            gh release create "$TAG" "$ZIP" --verify-tag --title "$TITLE" "${NOTES[@]}"
           fi

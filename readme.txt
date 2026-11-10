@@ -53,7 +53,9 @@ Pull your approved affiliate offers from WarriorPlus and turn them into short, c
 
 To release: bump "Version:" in aff-link-cloaker.php and "Stable tag:" here, optionally add
 release-notes/vX.Y.Z.md, commit, then push a tag `vX.Y.Z`. The Release workflow builds the zip
-and publishes a GitHub release with it attached.
+and publishes a GitHub release with it attached. Start the notes file with a heading such as
+`# vX.Y.Z: Short summary` to use it as the release title (otherwise the title is the tag).
+Without a notes file, GitHub generates notes from the commits.
 
 Strauss rewrites `use Bignall\WPFoundation\...` in src/ to `AffLinkCloaker\Vendor\Bignall\WPFoundation\...`; that's expected and committed.
 
