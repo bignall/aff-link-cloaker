@@ -95,7 +95,7 @@ final class LinkEditor {
 				<th><label for="alc_target_url"><?php esc_html_e( 'Affiliate URL', 'aff-link-cloaker' ); ?></label></th>
 				<td>
 					<input type="url" id="alc_target_url" name="alc_target_url" value="<?php echo esc_attr( Links::meta( $post->ID, 'target_url' ) ); ?>" class="large-text" placeholder="https://" />
-					<?php if ( $source ) : ?>
+					<?php if ( $source && $source->hasOfferApi() ) : ?>
 						<p class="description"><?php echo esc_html( sprintf( /* translators: %s: network name */ __( 'Kept up to date by the %s sync.', 'aff-link-cloaker' ), $source->label() ) ); ?></p>
 					<?php endif; ?>
 				</td>

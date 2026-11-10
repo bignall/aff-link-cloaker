@@ -85,7 +85,7 @@ final class Importer {
 				Links::setMeta( $post_id, $key, $value );
 			}
 		}
-		if ( '' !== $offer->source && '' !== $offer->offerId ) {
+		if ( '' !== $offer->source && '' !== $offer->offerId && self::fromOfferApi( $offer ) ) {
 			Links::setMeta( $post_id, 'request_status', $offer->requestStatus );
 			Links::setMeta( $post_id, 'offer_status', $offer->offerStatus );
 			Links::setMeta( $post_id, 'synced_at', time() );
@@ -101,6 +101,12 @@ final class Importer {
 			'post_id' => (int) $post_id,
 			'created' => ! $existing,
 		);
+	}
+
+	/** Whether the offer's network lists offers through an API (so its status and sync time mean something). */
+	private static function fromOfferApi( Offer $offer ): bool {
+		$source = App::instance()->sources->get( $offer->source );
+		return null !== $source && $source->hasOfferApi();
 	}
 
 	/**

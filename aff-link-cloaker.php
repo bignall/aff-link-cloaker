@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       Affiliate Link Cloaker
- * Description:       Import your approved affiliate offers (WarriorPlus first) and turn them into short, cloaked, trackable redirect links you can use on this site or anywhere else.
- * Version:           0.2.1
+ * Description:       Import your affiliate offers from WarriorPlus and JVZoo and turn them into short, cloaked, trackable redirect links you can use on this site or anywhere else.
+ * Version:           0.3.0
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Author:            Arbe

@@ -32,6 +32,15 @@ final class WarriorPlusSource implements Source {
 		return 'WarriorPlus';
 	}
 
+	public function hasOfferApi(): bool {
+		return true;
+	}
+
+	/** WarriorPlus documents no sub-ID format for promote URLs, so sub-IDs stay in the click log. */
+	public function applySubId( string $url, string $subid ): string {
+		return $url;
+	}
+
 	public function canListOffers(): bool {
 		return '' !== Settings::warriorPlusApiKey();
 	}
@@ -90,13 +99,16 @@ final class WarriorPlusSource implements Source {
 		);
 	}
 
-	public function offerFromUrl( string $url, string $name = '' ): ?Offer {
+	public function offerFromUrl( string $url, string $name = '' ): Offer|\WP_Error|null {
 		$parts = wp_parse_url( $url );
 		$host  = strtolower( (string) ( $parts['host'] ?? '' ) );
 		$path  = trim( (string) ( $parts['path'] ?? '' ), '/' );
 
-		if ( ! preg_match( '/(^|\.)warriorplus\.com$/', $host ) || ! preg_match( '#^o2/a/([a-z0-9]+)#i', $path, $m ) ) {
+		if ( ! preg_match( '/(^|\.)warriorplus\.com$/', $host ) ) {
 			return null;
+		}
+		if ( ! preg_match( '#^o2/a/([a-z0-9]+)#i', $path, $m ) ) {
+			return new \WP_Error( 'alc_not_affiliate_link', __( 'This is a WarriorPlus page, not your affiliate link. Use the link from "Get Link" on your affiliate offers page (it contains /o2/a/).', 'aff-link-cloaker' ) );
 		}
 
 		return new Offer(

@@ -27,11 +27,14 @@ final class SourceRegistry {
 		return $this->sources;
 	}
 
-	/** The network a pasted URL belongs to, as an Offer; a manual offer if none matches. */
-	public function offerFromUrl( string $url, string $name = '' ): Offer {
+	/**
+	 * The network a pasted URL belongs to, as an Offer; a manual offer if none matches; a WP_Error
+	 * if it's a network's page rather than an affiliate link.
+	 */
+	public function offerFromUrl( string $url, string $name = '' ): Offer|\WP_Error {
 		foreach ( $this->sources as $source ) {
 			$offer = $source->offerFromUrl( $url, $name );
-			if ( $offer ) {
+			if ( null !== $offer ) {
 				return $offer;
 			}
 		}

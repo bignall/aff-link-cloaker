@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace AffLinkCloaker;
 
 use AffLinkCloaker\Sources\SourceRegistry;
+use AffLinkCloaker\Sources\JVZoo\JVZooSource;
 use AffLinkCloaker\Sources\WarriorPlus\WarriorPlusSource;
 use AffLinkCloaker\Vendor\Bignall\WPFoundation\Plugin;
 
@@ -22,6 +23,7 @@ final class App {
 	public static function boot( Plugin $plugin ): void {
 		$sources = new SourceRegistry();
 		$sources->register( new WarriorPlusSource() );
+		$sources->register( new JVZooSource() );
 
 		/**
 		 * Register more affiliate networks.

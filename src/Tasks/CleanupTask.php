@@ -25,5 +25,15 @@ final class CleanupTask extends AbstractTask {
 	public function uninstall( Plugin $plugin ): void {
 		delete_option( Sync::LAST_RUN_OPTION );
 		WarriorPlusSource::forgetCache();
+
+		// Cached JVZoo product names: one transient per product, so match them by prefix.
+		global $wpdb;
+		$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+				$wpdb->esc_like( '_transient_alc_jvz_name_' ) . '%',
+				$wpdb->esc_like( '_transient_timeout_alc_jvz_name_' ) . '%'
+			)
+		);
 	}
 }

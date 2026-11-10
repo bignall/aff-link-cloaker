@@ -119,6 +119,12 @@ final class Links {
 		$fallback = (string) Settings::get( 'inactive_url' );
 		if ( '' !== $fallback && self::isDead( $post_id ) ) {
 			$url = $fallback;
+		} elseif ( '' !== $subid ) {
+			// Let the network record the sub-ID where it supports one (e.g. JVZoo's ?tid=).
+			$source = App::instance()->sources->get( self::meta( $post_id, 'source' ) );
+			if ( $source ) {
+				$url = $source->applySubId( $url, $subid );
+			}
 		}
 
 		/**

@@ -46,10 +46,11 @@ final class ImportPage {
 	/* -------------------------------------------------------------- */
 
 	public static function render(): void {
-		$sources = App::instance()->sources->all();
+		// Networks with an offers API get a tab; the rest (e.g. JVZoo) are imported by pasting links.
+		$sources = array_filter( App::instance()->sources->all(), static fn ( Source $s ): bool => $s->hasOfferApi() );
 		$tab     = sanitize_key( wp_unslash( $_GET['tab'] ?? '' ) ); // phpcs:ignore WordPress.Security.NonceVerification
 		if ( 'paste' !== $tab && ! isset( $sources[ $tab ] ) ) {
-			$tab = (string) array_key_first( $sources );
+			$tab = $sources ? (string) array_key_first( $sources ) : 'paste';
 		}
 		?>
 		<div class="wrap">
@@ -204,11 +205,11 @@ final class ImportPage {
 			<input type="hidden" name="action" value="alc_import_pasted" />
 			<?php wp_nonce_field( 'alc_import_pasted' ); ?>
 			<p><label for="alc_pasted"><?php esc_html_e( 'Affiliate links, one per line. Add a name with “Name | URL”; otherwise rename the links afterwards.', 'aff-link-cloaker' ); ?></label></p>
-			<textarea id="alc_pasted" name="links" rows="10" class="large-text code" placeholder="Super Traffic Bot | https://warriorplus.com/o2/a/abc123/0&#10;https://warriorplus.com/o2/a/def456/0"></textarea>
+			<textarea id="alc_pasted" name="links" rows="10" class="large-text code" placeholder="Super Traffic Bot | https://warriorplus.com/o2/a/abc123/0&#10;https://www.jvzoo.com/c/12345/67890"></textarea>
 			<p class="description">
 				<?php
 				/* translators: %d: max lines */
-				echo esc_html( sprintf( __( 'Up to %d per batch. Links from any network work; WarriorPlus links are matched to your offers on the next sync. Links you already have are skipped.', 'aff-link-cloaker' ), self::PASTE_MAX ) );
+				echo esc_html( sprintf( __( 'Up to %d per batch. Links from any network work. WarriorPlus links are matched to your offers on the next sync; JVZoo links get their product name from JVZoo when you leave the name out. Links you already have are skipped.', 'aff-link-cloaker' ), self::PASTE_MAX ) );
 				?>
 			</p>
 			<?php self::importOptions( $cats ); ?>
@@ -287,6 +288,10 @@ final class ImportPage {
 				continue;
 			}
 			$offer = App::instance()->sources->offerFromUrl( $url, $row['name'] );
+			if ( is_wp_error( $offer ) ) {
+				$results[] = array( new Offer( '', '', $row['name'], $url ), $offer );
+				continue;
+			}
 			if ( Links::findExisting( $offer->source, $offer->offerId, $offer->affiliateUrl ) ) {
 				$results[] = array( $offer, new \WP_Error( 'alc_exists', __( 'Already has a cloaked link; skipped.', 'aff-link-cloaker' ) ) );
 				continue;
