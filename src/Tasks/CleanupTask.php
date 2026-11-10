@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace AffLinkCloaker\Tasks;
 
-use AffLinkCloaker\Links;
 use AffLinkCloaker\Sources\WarriorPlus\WarriorPlusSource;
 use AffLinkCloaker\Sync;
 use AffLinkCloaker\Vendor\Bignall\WPFoundation\Plugin;
@@ -26,7 +25,5 @@ final class CleanupTask extends AbstractTask {
 	public function uninstall( Plugin $plugin ): void {
 		delete_option( Sync::LAST_RUN_OPTION );
 		WarriorPlusSource::forgetCache();
-		// Core's hierarchy cache for the category taxonomy, which WP Foundation 0.1.2 leaves behind.
-		delete_option( Links::TAXONOMY . '_children' );
 	}
 }

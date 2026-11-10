@@ -25,7 +25,8 @@ final class Notices {
 	 *
 	 * @param string       $type    success, warning, error or info.
 	 * @param string       $message Plain text.
-	 * @param list<string> $items   Optional plain-text list items.
+	 * @param list<string|array{text: string, url?: string}> $items Optional list items: plain text, or
+	 *        text with a URL to print as a link.
 	 */
 	public static function flash( string $type, string $message, array $items = array() ): void {
 		App::instance()->plugin->notices()->flash( $type, $message, $items );

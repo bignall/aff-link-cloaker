@@ -4,7 +4,7 @@ Tags: affiliate, links, cloaking, redirect, warriorplus
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.2.0
+Stable tag: 0.2.1
 License: GPLv2 or later
 
 Pull your approved affiliate offers from WarriorPlus and turn them into short, cloaked, trackable links.
@@ -58,6 +58,11 @@ and publishes a GitHub release with it attached.
 Strauss rewrites `use Bignall\WPFoundation\...` in src/ to `AffLinkCloaker\Vendor\Bignall\WPFoundation\...`; that's expected and committed.
 
 == Changelog ==
+
+= 0.2.1 =
+* Import results link each new cloaked link to its edit screen again.
+* Updated WP Foundation to 0.1.3: uninstall now also removes the link categories' hierarchy cache.
+* Release builds resolve dependencies for PHP 8.1.
 
 = 0.2.0 =
 * WarriorPlus V2 API: list your affiliate offers (approved only or all) and create cloaked links in bulk.

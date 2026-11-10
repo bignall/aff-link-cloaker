@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "bignall/wp-foundation",
-            "version": "0.1.2",
+            "version": "0.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bignall/wp-foundation.git",
-                "reference": "1b889fde639058d099387970910c7106d2017497"
+                "reference": "1c9806045f61d35746d25079cbddc208609b4786"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bignall/wp-foundation/zipball/1b889fde639058d099387970910c7106d2017497",
-                "reference": "1b889fde639058d099387970910c7106d2017497",
+                "url": "https://api.github.com/repos/bignall/wp-foundation/zipball/1c9806045f61d35746d25079cbddc208609b4786",
+                "reference": "1c9806045f61d35746d25079cbddc208609b4786",
                 "shasum": ""
             },
             "require": {
@@ -63,9 +63,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bignall/wp-foundation/issues",
-                "source": "https://github.com/bignall/wp-foundation/tree/0.1.2"
+                "source": "https://github.com/bignall/wp-foundation/tree/0.1.3"
             },
-            "time": "2026-11-09T23:02:23+00:00"
+            "time": "2026-11-10T22:53:51+00:00"
         }
     ],
     "packages-dev": [

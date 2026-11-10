@@ -322,7 +322,11 @@ final class ImportPage {
 				continue;
 			}
 			$cloaked = 'publish' === get_post_status( $r['post_id'] ) ? Links::cloakedUrl( $r['post_id'] ) : __( '(draft)', 'aff-link-cloaker' );
-			$ok[]    = html_entity_decode( get_the_title( $r['post_id'] ), ENT_QUOTES, 'UTF-8' ) . ' → ' . $cloaked;
+			// Link each new cloaked URL to its edit screen (WP Foundation escapes text and URL).
+			$ok[] = array(
+				'text' => html_entity_decode( get_the_title( $r['post_id'] ), ENT_QUOTES, 'UTF-8' ) . ' → ' . $cloaked,
+				'url'  => (string) get_edit_post_link( $r['post_id'], 'raw' ),
+			);
 		}
 		if ( $ok ) {
 			/* translators: %d: count */
