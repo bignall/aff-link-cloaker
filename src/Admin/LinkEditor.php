@@ -38,6 +38,12 @@ final class LinkEditor {
 		wp_enqueue_style( 'alc-admin', App::url( 'assets/admin.css' ), array(), App::version() );
 	}
 
+	/** The shortcode that renders a link on this site. */
+	public static function shortcode( WP_Post $post ): string {
+		return sprintf( '[alc_link slug="%s"]', $post->post_name );
+	}
+
+	/** A read-only field with a Copy button, for a URL or a shortcode. */
 	public static function copyField( string $url ): string {
 		return sprintf(
 			'<span class="alc-copy"><input type="text" readonly value="%1$s" onfocus="this.select()" /> <button type="button" class="button button-small alc-copy-btn" data-url="%1$s">%2$s</button></span>',
@@ -62,6 +68,20 @@ final class LinkEditor {
 	public static function metaBoxes(): void {
 		add_meta_box( 'alc_link_details', __( 'Link Details', 'aff-link-cloaker' ), array( self::class, 'renderDetails' ), null, 'normal', 'high' );
 		add_meta_box( 'alc_link_stats', __( 'Clicks', 'aff-link-cloaker' ), array( self::class, 'renderStats' ), null, 'side' );
+
+		// The post type supports excerpts so the text has somewhere to live; show it as a
+		// short description instead of WordPress's Excerpt box and its help text about themes.
+		remove_meta_box( 'postexcerpt', Links::POST_TYPE, 'normal' );
+		add_meta_box( 'alc_description', __( 'Short description', 'aff-link-cloaker' ), array( self::class, 'renderDescription' ), null, 'normal', 'default' );
+	}
+
+	public static function renderDescription( WP_Post $post ): void {
+		printf(
+			'<label class="screen-reader-text" for="excerpt">%s</label><textarea rows="3" cols="40" name="excerpt" id="excerpt" class="large-text">%s</textarea><p class="description">%s</p>',
+			esc_html__( 'Short description', 'aff-link-cloaker' ),
+			esc_textarea( $post->post_excerpt ),
+			esc_html__( 'A sentence or two about the product, for your own reference. It isn’t shown on the site yet.', 'aff-link-cloaker' )
+		);
 	}
 
 	public static function renderDetails( WP_Post $post ): void {
@@ -80,6 +100,19 @@ final class LinkEditor {
 						echo self::copyField( $cloaked ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in copyField().
 					} else {
 						echo '<em>' . esc_html__( 'Publish this link to activate its cloaked URL.', 'aff-link-cloaker' ) . '</em>';
+					}
+					?>
+				</td>
+			</tr>
+			<tr>
+				<th><?php esc_html_e( 'Shortcode', 'aff-link-cloaker' ); ?></th>
+				<td>
+					<?php
+					if ( $cloaked ) {
+						echo self::copyField( self::shortcode( $post ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in copyField().
+						echo '<p class="description">' . esc_html__( 'Paste into a post or page to show this link. Add text between [alc_link …] and [/alc_link] to change the link text.', 'aff-link-cloaker' ) . '</p>';
+					} else {
+						echo '<em>' . esc_html__( 'Available once the link is published.', 'aff-link-cloaker' ) . '</em>';
 					}
 					?>
 				</td>
@@ -143,9 +176,6 @@ final class LinkEditor {
 				</td>
 			</tr>
 		</table>
-		<?php if ( $cloaked ) : ?>
-			<p><strong><?php esc_html_e( 'Shortcode:', 'aff-link-cloaker' ); ?></strong> <code>[alc_link slug="<?php echo esc_html( $post->post_name ); ?>"]</code></p>
-		<?php endif; ?>
 		<?php
 	}
 
@@ -205,7 +235,8 @@ final class LinkEditor {
 		foreach ( $cols as $key => $label ) {
 			$new[ $key ] = $label;
 			if ( 'title' === $key ) {
-				$new['alc_url']    = __( 'Cloaked URL', 'aff-link-cloaker' );
+				$new['alc_url']       = __( 'Cloaked URL', 'aff-link-cloaker' );
+				$new['alc_shortcode'] = __( 'Shortcode', 'aff-link-cloaker' );
 				$new['alc_source'] = __( 'Source', 'aff-link-cloaker' );
 				$new['alc_clicks'] = __( 'Clicks (30d / total)', 'aff-link-cloaker' );
 			}
@@ -217,6 +248,10 @@ final class LinkEditor {
 		switch ( $col ) {
 			case 'alc_url':
 				echo 'publish' === get_post_status( $post_id ) ? self::copyField( Links::cloakedUrl( $post_id ) ) : '&mdash;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				break;
+			case 'alc_shortcode':
+				$post = get_post( $post_id );
+				echo $post && 'publish' === $post->post_status ? self::copyField( self::shortcode( $post ) ) : '&mdash;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				break;
 			case 'alc_source':
 				$source = App::instance()->sources->get( Links::meta( $post_id, 'source' ) );

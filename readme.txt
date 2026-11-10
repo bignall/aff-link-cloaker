@@ -65,6 +65,8 @@ Strauss rewrites `use Bignall\WPFoundation\...` in src/ to `AffLinkCloaker\Vendo
 = 0.3.0 =
 * JVZoo support: paste JVZoo affiliate links; product names are looked up from JVZoo, sub-IDs are passed as JVZoo's tid tracking ID, and the same product isn't added twice.
 * Pasting a network's page instead of your affiliate link (e.g. a WarriorPlus offer page) is now rejected with an explanation instead of becoming a link that earns nothing.
+* Edit screen: the shortcode is a proper row with a Copy button, and WordPress's Excerpt box is now a "Short description" box for your own notes.
+* Links list: new Shortcode column with a Copy button.
 * Developers: the `Source` interface gained `hasOfferApi()` and `applySubId()`, and `offerFromUrl()` may return a WP_Error. Custom sources registered with `alc_register_sources` need updating.
 
 = 0.2.1 =

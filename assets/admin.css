@@ -1,5 +1,10 @@
 .alc-copy { display: inline-flex; gap: 4px; align-items: center; max-width: 100%; }
 .alc-copy input { font-family: monospace; font-size: 12px; width: 260px; max-width: 100%; }
+.alc-form .alc-copy input { width: 420px; }
+.column-alc_url .alc-copy input, .column-alc_shortcode .alc-copy input { width: 100%; min-width: 120px; }
+.column-alc_url .alc-copy, .column-alc_shortcode .alc-copy { display: flex; }
+.column-alc_shortcode { width: 18%; }
+.column-alc_url { width: 22%; }
 .alc-preview { max-width: 240px; height: auto; border: 1px solid #dcdcde; }
 .alc-warn { color: #b32d2e; }
 .alc-results { list-style: disc; margin-left: 20px; }
