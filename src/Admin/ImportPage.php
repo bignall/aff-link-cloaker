@@ -287,6 +287,7 @@ final class ImportPage {
 				match ( $r['status'] ) {
 					'created' => array( 'post_id' => $r['post_id'], 'created' => true ),
 					'exists'  => new \WP_Error( 'alc_exists', __( 'Already has a cloaked link; skipped.', 'aff-link-cloaker' ) ),
+					'renamed' => array( 'post_id' => $r['post_id'], 'created' => false ),
 					default   => $r['error'] ?? new \WP_Error( 'alc_error', __( 'Could not import.', 'aff-link-cloaker' ) ),
 				},
 			);
@@ -322,7 +323,7 @@ final class ImportPage {
 			$cloaked = 'publish' === get_post_status( $r['post_id'] ) ? Links::cloakedUrl( $r['post_id'] ) : __( '(draft)', 'aff-link-cloaker' );
 			// Link each new cloaked URL to its edit screen (WP Foundation escapes text and URL).
 			$ok[] = array(
-				'text' => html_entity_decode( get_the_title( $r['post_id'] ), ENT_QUOTES, 'UTF-8' ) . ' → ' . $cloaked,
+				'text' => html_entity_decode( get_the_title( $r['post_id'] ), ENT_QUOTES, 'UTF-8' ) . ' → ' . $cloaked . ( empty( $r['created'] ) ? ' ' . __( '(renamed)', 'aff-link-cloaker' ) : '' ),
 				'url'  => (string) get_edit_post_link( $r['post_id'], 'raw' ),
 			);
 		}

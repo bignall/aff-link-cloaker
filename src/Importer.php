@@ -115,7 +115,8 @@ final class Importer {
 	 * @param list<array{url: string, name: string}>          $rows    Links with optional names.
 	 * @param array{status?: string, category?: int}           $options Post status and category.
 	 * @return list<array{offer: Offer, status: string, post_id: int, error: ?WP_Error}>
-	 *         status is "created", "exists" (post_id is the existing link) or "error".
+	 *         status is "created", "exists" (post_id is the existing link), "renamed" (an existing
+	 *         link whose title was only a label got the real name) or "error".
 	 */
 	public static function importLinks( array $rows, array $options = array() ): array {
 		$results = array();
@@ -135,7 +136,8 @@ final class Importer {
 			}
 			$existing = Links::findExisting( $offer->source, $offer->offerId, $offer->affiliateUrl );
 			if ( $existing ) {
-				$results[] = self::result( $offer, 'exists', $existing );
+				$renamed = '' !== $name && self::repairPlaceholderTitle( $existing, $name );
+				$results[] = self::result( $offer, $renamed ? 'renamed' : 'exists', $existing );
 				continue;
 			}
 			$saved = self::save( $offer, $options + array( 'custom_name' => '' !== $name ) );
@@ -144,6 +146,28 @@ final class Importer {
 				: self::result( $offer, 'created', $saved['post_id'] );
 		}
 		return $results;
+	}
+
+	/**
+	 * Titles that are labels, not product names. Extension 0.1.0 took JVZoo's product-page tab
+	 * links ("Seller Information", "Integrations", "Bonuses") for product names.
+	 */
+	private const PLACEHOLDER_TITLES = array( 'seller information', 'integrations', 'bonuses', 'details', 'info', 'get link' );
+
+	/**
+	 * Give an existing link its real name when its title is only a label. Its slug follows, as
+	 * "/go/seller-information-7/" is no use to anyone.
+	 *
+	 * @return bool Whether the link was renamed.
+	 */
+	private static function repairPlaceholderTitle( int $post_id, string $name ): bool {
+		$post = get_post( $post_id );
+		if ( ! $post || in_array( strtolower( $name ), self::PLACEHOLDER_TITLES, true ) || ! in_array( strtolower( trim( $post->post_title ) ), self::PLACEHOLDER_TITLES, true ) ) {
+			return false;
+		}
+		$slug = wp_unique_post_slug( sanitize_title( $name ), $post_id, $post->post_status, $post->post_type, 0 );
+		$done = wp_update_post( wp_slash( array( 'ID' => $post_id, 'post_title' => $name, 'post_name' => $slug ) ), true );
+		return ! is_wp_error( $done );
 	}
 
 	/** @return array{offer: Offer, status: string, post_id: int, error: ?WP_Error} */

@@ -100,13 +100,14 @@ async function send() {
 		return;
 	}
 
-	setStatus( 'summary', `${ data.created } created, ${ data.exists } already on your site, ${ data.errors } not imported.`, data.errors ? 'error' : 'ok' );
+	const renamed = data.renamed ? `, ${ data.renamed } renamed` : '';
+	setStatus( 'summary', `${ data.created } created${ renamed }, ${ data.exists } already on your site, ${ data.errors } not imported.`, data.errors ? 'error' : 'ok' );
 	for ( const r of data.results ) {
 		const li = document.createElement( 'li' );
 		li.className = r.status;
 		const title = Object.assign( document.createElement( 'strong' ), { textContent: r.title || r.name || r.url } );
 		li.append( title, ' ' );
-		const tag = Object.assign( document.createElement( 'span' ), { className: 'tag', textContent: { created: 'created', exists: 'already there', error: 'not imported' }[ r.status ] } );
+		const tag = Object.assign( document.createElement( 'span' ), { className: 'tag', textContent: { created: 'created', renamed: 'renamed', exists: 'already there', error: 'not imported' }[ r.status ] } );
 		li.append( tag );
 		if ( r.cloaked_url ) {
 			const row = document.createElement( 'div' );

@@ -139,6 +139,7 @@ final class Rest {
 		return new WP_REST_Response(
 			array(
 				'created' => $counts['created'] ?? 0,
+				'renamed' => $counts['renamed'] ?? 0,
 				'exists'  => $counts['exists'] ?? 0,
 				'errors'  => $counts['error'] ?? 0,
 				'results' => $out,

@@ -1,76 +1,117 @@
 /**
- * Runs inside a JVZoo page (injected by the popup) and returns the affiliate links it can find.
+ * Runs inside a JVZoo page (injected by the popup) and returns your affiliate links on it.
  *
- * It doesn't depend on JVZoo's exact layout:
- *  1. Any JVZoo affiliate link in the page: https://www.jvzoo.com/c/<affiliate>/<product>
- *     (or jvz1.com … jvz9.com), in links, text boxes, data attributes or text.
- *  2. Products linked to their Affiliate Information page (…/affiliateinfo[new]/index/<id>),
- *     for when links only appear in a "Get Link" popup: the link is built from the product ID
- *     and your affiliate ID (taken from any link on the page, or from the extension's settings).
+ * 1. JVZoo's own "Get Link" boxes, which are already in the page:
+ *    - Approved Products list: each row has a popup with the product name
+ *      (#modalTitle<id>) and your link (<input id="affiliate_link<id>">).
+ *    - A product's Affiliate Information page: <input id="affiliate_link"> holds your link
+ *      and the page title is "<Product> - Affiliate Information - JVZoo".
+ * 2. Only if a page has none of those: any JVZoo affiliate link in the page, and products
+ *    linked to their Affiliate Information page, with links built from your affiliate ID.
+ *
+ * Links under someone else's affiliate ID are ignored. JVZoo's pages include its own links
+ * (affiliate ID 1, e.g. the "Product of the day" banner), which aren't yours.
  *
  * Must stay a single self-contained function: chrome.scripting.executeScript serialises it.
  *
  * @param {string} knownAffiliateId Affiliate ID from settings, or ''.
- * @returns {{links: Array<{url: string, name: string, product: string}>, affiliateId: string, stats: object}}
+ * @returns {{links: Array<{url: string, name: string, product: string}>, affiliateId: string, stats: object, productsWithoutLink: number}}
  */
 function alcScrapeJvzoo( knownAffiliateId ) {
-	const LINK_RE = /https?:\/\/(?:www\.)?(?:jvzoo\.com|jvz[1-9]\.com)\/c\/(\d+)\/(\d+)\/?/gi;
-	const INFO_RE = /\/affiliate\/affiliateinfo(?:new)?\/index\/(\d+)/i;
+	const LINK_RE = /https?:\/\/(?:www\.)?(?:jvzoo\.com|jvz[1-9]\.com)\/c\/(\d+)\/(\d+)\/?/i;
+	const LINK_RE_ALL = new RegExp( LINK_RE.source, 'gi' );
+	const INFO_RE = /\/affiliate\/affiliateinfo(?:new)?\/index\/(\d+)\/?$/i; // The product's own page, not its ?tab= pages.
+	const TAB_LABEL = /^(details|info|view|more|integrations|bonuses|seller information|affiliate info(rmation)?|get link)$/i;
 	const clean = ( s ) => ( s || '' ).replace( /\s+/g, ' ' ).trim();
+	const parse = ( url ) => {
+		const m = String( url || '' ).match( LINK_RE );
+		return m ? { url: m[ 0 ].replace( /\/$/, '' ), affiliate: m[ 1 ], product: m[ 2 ] } : null;
+	};
 
+	const stats = { linkBoxes: 0, pageLinks: 0, built: 0, ignored: 0 };
 	const byProduct = new Map(); // product id -> { url, name, product }
-	const names = new Map(); // product id -> name
+
+	// Your affiliate ID: settings, then JVZoo's hidden field on product pages.
 	let affiliateId = ( knownAffiliateId || '' ).trim();
-	const stats = { pageLinks: 0, infoLinks: 0, built: 0 };
+	if ( ! affiliateId ) {
+		const field = document.querySelector( 'input[name="affiliate_id"]' );
+		affiliateId = field && /^\d+$/.test( field.value ) ? field.value : '';
+	}
 
-	// The row/card an element belongs to, for finding the product's name next to its link.
-	const container = ( el ) => el.closest( 'tr, li, .row, .card, .panel, [class*="product"], [class*="item"]' ) || el.parentElement;
+	// 1) JVZoo's "Get Link" boxes.
+	const pageTitleName = clean( document.title.replace( /\s+-\s+Affiliate Information\s+-\s+JVZoo\s*$/i, '' ) );
+	document.querySelectorAll( 'input[id^="affiliate_link"]' ).forEach( ( input ) => {
+		const link = parse( input.value );
+		if ( ! link ) {
+			return;
+		}
+		stats.linkBoxes++;
+		affiliateId = affiliateId || link.affiliate;
+		const id = input.id.slice( 'affiliate_link'.length ); // "<product id>" in the list, "" on a product page.
+		const title = id ? document.getElementById( 'modalTitle' + id ) : null;
+		const name = title ? clean( title.textContent ) : ( pageTitleName !== clean( document.title ) ? pageTitleName : '' );
+		if ( ! byProduct.has( link.product ) ) {
+			byProduct.set( link.product, { url: link.url, name, product: link.product } );
+		}
+	} );
 
-	// 1) Product names (and IDs) from links to the product's Affiliate Information page.
+	if ( byProduct.size > 0 ) {
+		return { links: [ ...byProduct.values() ], affiliateId, stats, productsWithoutLink: 0 };
+	}
+
+	// 2) Fallback for other layouts.
+
+	// Product names from links to each product's own Affiliate Information page (not its tabs).
+	const names = new Map(); // product id -> name
 	document.querySelectorAll( 'a[href]' ).forEach( ( a ) => {
 		const m = a.getAttribute( 'href' ).match( INFO_RE );
 		if ( ! m ) {
 			return;
 		}
-		stats.infoLinks++;
-		// Link text, unless it's a generic label ("Details", "Info"); then the link's title.
-		const generic = /^(details|info|view|more|affiliate info(rmation)?)$/i;
-		const name = [ clean( a.textContent ), clean( a.getAttribute( 'title' ) ) ].find( ( n ) => n && ! generic.test( n ) ) || '';
-		if ( name || ! names.has( m[ 1 ] ) ) {
-			names.set( m[ 1 ], name || names.get( m[ 1 ] ) || '' );
+		const name = [ clean( a.textContent ), clean( a.getAttribute( 'title' ) ) ].find( ( n ) => n && ! TAB_LABEL.test( n ) ) || '';
+		if ( name ) {
+			names.set( m[ 1 ], names.get( m[ 1 ] ) || name ); // First real name wins.
+		} else if ( ! names.has( m[ 1 ] ) ) {
+			names.set( m[ 1 ], '' );
 		}
 	} );
 
-	// 2) Affiliate links anywhere in the page.
-	const sources = [];
+	// Affiliate links anywhere in the page.
+	const found = [];
+	const values = [];
 	document.querySelectorAll( 'a[href], input[value], textarea, [data-clipboard-text], [data-link], [data-url], [data-href]' ).forEach( ( el ) => {
 		for ( const v of [ el.getAttribute( 'href' ), el.value, el.getAttribute( 'data-clipboard-text' ), el.getAttribute( 'data-link' ), el.getAttribute( 'data-url' ), el.getAttribute( 'data-href' ) ] ) {
 			if ( v ) {
-				sources.push( [ v, el ] );
+				values.push( v );
 			}
 		}
 	} );
-	sources.push( [ document.body ? document.body.innerText : '', null ] );
-
-	for ( const [ text, el ] of sources ) {
-		for ( const m of String( text ).matchAll( LINK_RE ) ) {
-			const [ url, aff, product ] = m;
-			affiliateId = affiliateId || aff;
-			if ( byProduct.has( product ) ) {
-				continue;
-			}
-			stats.pageLinks++;
-			let name = names.get( product ) || '';
-			if ( ! name && el ) {
-				const row = container( el );
-				const info = row && row.querySelector( 'a[href*="affiliateinfo"]' );
-				name = clean( info ? info.textContent : '' );
-			}
-			byProduct.set( product, { url: url.replace( /\/$/, '' ), name, product } );
+	values.push( document.body ? document.body.innerText : '' );
+	for ( const text of values ) {
+		for ( const m of String( text ).matchAll( LINK_RE_ALL ) ) {
+			found.push( parse( m[ 0 ] ) );
 		}
 	}
 
-	// 3) Products we know only by ID: build the link from your affiliate ID.
+	// Without a known ID, yours is the most common one, never JVZoo's own (1).
+	if ( ! affiliateId ) {
+		const counts = new Map();
+		found.filter( ( l ) => l.affiliate !== '1' ).forEach( ( l ) => counts.set( l.affiliate, ( counts.get( l.affiliate ) || 0 ) + 1 ) );
+		affiliateId = [ ...counts.entries() ].sort( ( a, b ) => b[ 1 ] - a[ 1 ] )[ 0 ]?.[ 0 ] || '';
+	}
+
+	for ( const link of found ) {
+		if ( link.affiliate !== affiliateId ) {
+			stats.ignored++;
+			continue;
+		}
+		if ( ! byProduct.has( link.product ) ) {
+			stats.pageLinks++;
+			byProduct.set( link.product, { url: link.url, name: names.get( link.product ) || '', product: link.product } );
+		}
+	}
+
+	// Products known only by ID: build the link from your affiliate ID.
 	if ( affiliateId ) {
 		for ( const [ product, name ] of names ) {
 			if ( ! byProduct.has( product ) ) {

@@ -1,11 +1,21 @@
 {
 	"manifest_version": 3,
 	"name": "Affiliate Link Cloaker",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Send the JVZoo products you're approved to promote to your Affiliate Link Cloaker WordPress site as cloaked links.",
-	"permissions": ["activeTab", "scripting", "storage"],
-	"host_permissions": ["https://www.jvzoo.com/*", "https://jvzoo.com/*"],
-	"optional_host_permissions": ["https://*/*", "http://*/*"],
+	"permissions": [
+		"activeTab",
+		"scripting",
+		"storage"
+	],
+	"host_permissions": [
+		"https://www.jvzoo.com/*",
+		"https://jvzoo.com/*"
+	],
+	"optional_host_permissions": [
+		"https://*/*",
+		"http://*/*"
+	],
 	"action": {
 		"default_title": "Affiliate Link Cloaker",
 		"default_popup": "popup.html"

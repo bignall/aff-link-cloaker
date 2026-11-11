@@ -20,7 +20,7 @@ input[type=text], input[type=url], input[type=password] { width: 100%; font: inh
 .alc-popup .check-all, .alc-popup .inline { display: flex; gap: 6px; align-items: center; margin: 8px 0; }
 .alc-popup #results li { padding: 6px 8px; border-bottom: 1px solid var(--line); }
 .alc-popup #results .tag { font-size: 11px; padding: 0 6px; border-radius: 8px; background: #f0f0f1; }
-.alc-popup #results .created .tag { background: #edfaef; color: var(--ok); }
+.alc-popup #results .created .tag, .alc-popup #results .renamed .tag { background: #edfaef; color: var(--ok); }
 .alc-popup #results .error .tag { background: #fcf0f1; color: var(--err); }
 .alc-popup #results small { display: block; }
 .alc-popup .copy { display: flex; gap: 4px; margin-top: 4px; }

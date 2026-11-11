@@ -27,10 +27,14 @@ The password is stored only in this browser (`chrome.storage.local`). You can re
 
 ## How it finds your links
 
-It doesn't depend on JVZoo's exact page layout:
+On the Approved Products page and on a product's Affiliate Information page, it reads JVZoo's own "Get Link" boxes, which already hold each product's name and your affiliate link.
+
+If a page doesn't have those, it falls back to:
 
 - Any of your affiliate links on the page (`https://www.jvzoo.com/c/<affiliate ID>/<product ID>`, or `jvz1.com`–`jvz9.com`), in links, text boxes, copy buttons or text.
-- Products linked to their Affiliate Information page, for when links only appear after clicking "Get Link". The link is built from the product ID and your affiliate ID, which is taken from any link on the page or from Settings.
+- Products linked to their Affiliate Information page, for when links only appear after clicking "Get Link". The link is built from the product ID and your affiliate ID, which is taken from Settings or from your links on the page.
+
+Links under someone else's affiliate ID are ignored, including JVZoo's own (affiliate ID 1), which appear in its "Product of the day" banner and on product pages.
 
 If a scan finds nothing on your Approved Products page, JVZoo's page probably differs from what the extension expects. Save the page (File → Save Page As…) and share it so the extension can be adjusted.
 
