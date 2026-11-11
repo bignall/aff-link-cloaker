@@ -1,6 +1,7 @@
 {
 	"name": "arbe/aff-link-cloaker",
 	"description": "Import affiliate offers (WarriorPlus first) and turn them into cloaked, trackable redirect links.",
+	"homepage": "https://bignall.github.io/aff-link-cloaker/",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"require": {

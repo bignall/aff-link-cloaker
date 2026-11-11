@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>JVZoo extension – Affiliate Link Cloaker</title>
+	<meta name="description" content="A browser extension that creates cloaked links for the JVZoo products you're approved to promote.">
+	<meta property="og:title" content="JVZoo extension – Affiliate Link Cloaker">
+	<meta property="og:description" content="A browser extension that creates cloaked links for the JVZoo products you're approved to promote.">
+	<meta property="og:image" content="https://bignall.github.io/aff-link-cloaker/assets/img/links-list.png">
+	<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+	<div class="wrap">
+		<a class="brand" href="index.html"><img src="assets/favicon.svg" alt="" width="28" height="28"> Affiliate Link Cloaker</a>
+		<nav class="nav" aria-label="Main">
+			<a href="index.html">Home</a>
+			<a href="guide.html">Guide</a>
+			<a href="extension.html" aria-current="page">JVZoo extension</a>
+			<a href="https://github.com/bignall/aff-link-cloaker/releases/latest">Download</a>
+			<a href="https://github.com/bignall/aff-link-cloaker">GitHub</a>
+		</nav>
+	</div>
+</header>
+<main id="main">
+<div class="wrap doc">
+	<nav class="toc" aria-label="On this page">
+		<strong>On this page</strong>
+		<ol>
+				<li><a href="#why">Why an extension</a></li>
+				<li><a href="#install">Install</a></li>
+				<li><a href="#connect">Connect to WordPress</a></li>
+				<li><a href="#use">Use it</a></li>
+				<li><a href="#finding">How it finds links</a></li>
+				<li><a href="#privacy">Permissions and privacy</a></li>
+				<li><a href="#trouble">Troubleshooting</a></li>
+		</ol>
+	</nav>
+	<article class="prose">
+		<h1>JVZoo extension</h1>
+		<p class="lead">Create cloaked links for every JVZoo product you're approved to promote, straight from your Approved Products page.</p>
+
+		<h2 id="why">Why an extension</h2>
+		<p>JVZoo's API only works for vendors. It can list a vendor's own products, but not the products an affiliate is approved to promote, and it never returns affiliate links. Those only appear on jvzoo.com when you're signed in. The extension reads them in your own browser, so your JVZoo password is never shared with anyone.</p>
+
+		<h2 id="install">Install</h2>
+		<ol>
+			<li>Download <strong>aff-link-cloaker-extension-x.y.z.zip</strong> from the <a href="https://github.com/bignall/aff-link-cloaker/releases/latest">latest release</a> and unzip it.</li>
+			<li>In Chrome, Edge or Brave, open <code>chrome://extensions</code> and turn on <strong>Developer mode</strong>.</li>
+			<li>Click <strong>Load unpacked</strong> and choose the unzipped folder, then pin the extension to your toolbar.</li>
+		</ol>
+		<p>You need the Affiliate Link Cloaker plugin, version 0.3.0 or newer, on your WordPress site.</p>
+
+		<h2 id="connect">Connect to WordPress</h2>
+		<ol>
+			<li>In WordPress, open <strong>Users → Profile</strong> and scroll to <strong>Application Passwords</strong>. Enter a name such as "Link Cloaker extension", click <strong>Add New Application Password</strong> and copy the password. Your site needs HTTPS for this.</li>
+			<li>Open the extension's <strong>Settings</strong>, by clicking it and choosing Settings, and enter your site address, WordPress user name and that password.</li>
+			<li>Click <strong>Save &amp; test connection</strong>. Your browser asks to let the extension access your site. Allow it, and you'll see "Connected to … as …".</li>
+		</ol>
+
+		<h2 id="use">Use it</h2>
+		<div class="split">
+			<div>
+				<ol>
+					<li>Sign in to JVZoo and open <strong>Affiliates → Approved Products</strong>.</li>
+					<li>Click the extension, then <strong>Scan this page</strong>. If your list has several pages, scan each one. Products collect in the extension until you send them.</li>
+					<li>Untick anything you don't want and fix any names.</li>
+					<li>Click <strong>Create cloaked links</strong>. Each result shows its cloaked URL with a Copy button. Products already on your site are reported as "already there", never duplicated.</li>
+				</ol>
+			</div>
+			<figure class="shot ext-shot"><img src="assets/img/extension-scan.png" alt="The extension listing three scanned JVZoo products, ready to send." width="380" height="528" loading="lazy"></figure>
+		</div>
+
+		<h2 id="finding">How it finds links</h2>
+		<p>It doesn't depend on the exact layout of JVZoo's pages. It looks for:</p>
+		<ul>
+			<li>Your affiliate links anywhere on the page, such as <code>https://www.jvzoo.com/c/&lt;your ID&gt;/&lt;product ID&gt;</code> or the <code>jvz1.com</code>–<code>jvz9.com</code> short links, including in text boxes and copy buttons.</li>
+			<li>Products linked to their Affiliate Information page, for when links only appear after clicking "Get Link". It builds those links from the product ID and your affiliate ID. Your affiliate ID comes from any link on the page, or you can enter it in Settings.</li>
+		</ul>
+
+		<h2 id="privacy">Permissions and privacy</h2>
+		<table class="plain">
+			<tr><th>jvzoo.com</th><td>Read the page you're on, only when you click <strong>Scan this page</strong>.</td></tr>
+			<tr><th>Your site</th><td>Send links to it. Asked for when you save Settings, and only for the address you enter.</td></tr>
+			<tr><th>Storage</th><td>Your settings, and the products you've scanned in this browser session. The Application Password stays in this browser, and you can revoke it from your WordPress profile at any time.</td></tr>
+		</table>
+
+		<h2 id="trouble">Troubleshooting</h2>
+		<ul>
+			<li><strong>"Not signed in":</strong> check the user name and Application Password, and that your site uses HTTPS.</li>
+			<li><strong>"Plugin wasn't found":</strong> make sure Affiliate Link Cloaker 0.3.0 or newer is active.</li>
+			<li><strong>"Found products but none of your links":</strong> enter your JVZoo affiliate ID in Settings. It's the first number in your JVZoo links: <code>jvzoo.com/c/<strong>12345</strong>/67890</code>.</li>
+			<li><strong>Nothing found on your Approved Products page:</strong> JVZoo's page may be laid out differently than expected. <a href="https://github.com/bignall/aff-link-cloaker/issues">Open an issue</a> with a saved copy of the page (File → Save Page As), with personal details removed.</li>
+		</ul>
+	</article>
+</div>
+</main>
+<footer class="site-footer">
+	<div class="wrap">
+		<p>Affiliate Link Cloaker · GPL-2.0-or-later · Built on <a href="https://bignall.github.io/wp-foundation/">WP Foundation</a></p>
+		<p>By <a href="https://rosinabignall.com/">Rosina Bignall</a> · <a href="https://github.com/bignall/aff-link-cloaker">Source on GitHub</a></p>
+	</div>
+</footer>
+</body>
+</html>

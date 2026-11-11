@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Guide – Affiliate Link Cloaker</title>
+	<meta name="description" content="Install Affiliate Link Cloaker, connect WarriorPlus and JVZoo, and use your cloaked links.">
+	<meta property="og:title" content="Guide – Affiliate Link Cloaker">
+	<meta property="og:description" content="Install Affiliate Link Cloaker, connect WarriorPlus and JVZoo, and use your cloaked links.">
+	<meta property="og:image" content="https://bignall.github.io/aff-link-cloaker/assets/img/links-list.png">
+	<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+	<div class="wrap">
+		<a class="brand" href="index.html"><img src="assets/favicon.svg" alt="" width="28" height="28"> Affiliate Link Cloaker</a>
+		<nav class="nav" aria-label="Main">
+			<a href="index.html">Home</a>
+			<a href="guide.html" aria-current="page">Guide</a>
+			<a href="extension.html">JVZoo extension</a>
+			<a href="https://github.com/bignall/aff-link-cloaker/releases/latest">Download</a>
+			<a href="https://github.com/bignall/aff-link-cloaker">GitHub</a>
+		</nav>
+	</div>
+</header>
+<main id="main">
+<div class="wrap doc">
+	<nav class="toc" aria-label="On this page">
+		<strong>On this page</strong>
+		<ol>
+				<li><a href="#install">Install</a></li>
+				<li><a href="#warriorplus">WarriorPlus</a></li>
+				<li><a href="#paste">Paste links</a></li>
+				<li><a href="#jvzoo">JVZoo</a></li>
+				<li><a href="#using">Using your links</a></li>
+				<li><a href="#subids">Sub-IDs</a></li>
+				<li><a href="#sync">Sync and dead offers</a></li>
+				<li><a href="#settings">Settings</a></li>
+				<li><a href="#updating">Updating</a></li>
+				<li><a href="#uninstall">Uninstalling</a></li>
+		</ol>
+	</nav>
+	<article class="prose">
+		<h1>Guide</h1>
+		<p class="lead">Install the plugin, connect your affiliate networks, and put your links to work.</p>
+
+		<h2 id="install">Install</h2>
+		<ol>
+			<li>Download <strong>aff-link-cloaker-x.y.z.zip</strong> from the <a href="https://github.com/bignall/aff-link-cloaker/releases/latest">latest release</a>.</li>
+			<li>In WordPress, go to <strong>Plugins → Add New → Upload Plugin</strong>, choose the zip and click <strong>Install Now</strong>, then <strong>Activate</strong>.</li>
+			<li>Under <strong>Settings → Permalinks</strong>, choose anything except "Plain", so links look like <code>yoursite.com/go/offer-name/</code>. With plain permalinks they still work, as <code>yoursite.com/?alc=offer-name</code>.</li>
+		</ol>
+		<p>You need PHP 8.1 or newer and WordPress 6.4 or newer. On older PHP, the plugin shows a notice instead of running.</p>
+
+		<h2 id="warriorplus">WarriorPlus</h2>
+		<ol>
+			<li>On WarriorPlus, go to <a href="https://warriorplus.com/account/api">My Account → API Key</a> and copy your key.</li>
+			<li>In WordPress, open <strong>Affiliate Links → Settings</strong>, paste the key and save. Click <strong>Test WarriorPlus connection</strong> to check it.</li>
+			<li>Open <strong>Affiliate Links → Import Offers</strong>. The WarriorPlus tab lists your offers. <em>Approved only</em> shows the ones you can promote now, and <em>All</em> includes pending and paused ones.</li>
+			<li>Tick the offers you want and click <strong>Create cloaked links for selected offers</strong>.</li>
+		</ol>
+		<figure class="shot"><img src="assets/img/import-warriorplus.png" alt="The WarriorPlus tab of Import Offers." width="1238" height="756" loading="lazy"></figure>
+		<div class="note"><p>To keep the key out of the database, add <code>define( 'ALC_WARRIORPLUS_API_KEY', 'your-key' );</code> to <code>wp-config.php</code> instead.</p></div>
+
+		<h2 id="paste">Paste links</h2>
+		<p>For any network, open <strong>Import Offers → Paste links</strong> and paste your affiliate links, one per line. Add a name with <code>Name | URL</code>:</p>
+		<pre>Hosting Partner | https://hosting.example.com/?ref=you
+https://www.jvzoo.com/c/123456/381904</pre>
+		<p>Links you already have are skipped. If you paste a network's page instead of your affiliate link, such as a WarriorPlus offer page, it's rejected with an explanation, because that link would earn you nothing.</p>
+
+		<h2 id="jvzoo">JVZoo</h2>
+		<p>JVZoo's API can't list the products you promote, so there are two ways to add them:</p>
+		<ul>
+			<li><strong>The browser extension (recommended):</strong> reads your Approved Products page while you're signed in and creates all the links in one click. See <a href="extension.html">JVZoo extension</a>.</li>
+			<li><strong>Paste links:</strong> paste links like <code>https://www.jvzoo.com/c/&lt;your ID&gt;/&lt;product ID&gt;</code>, or JVZoo's short <code>jvz1.com</code>–<code>jvz9.com</code> links. Leave out the name and it's looked up from JVZoo.</li>
+		</ul>
+
+		<h2 id="using">Using your links</h2>
+		<p>Every link has a cloaked URL and a shortcode, each with a Copy button, on the <strong>Affiliate Links</strong> list and on the link's edit screen.</p>
+		<figure class="shot"><img src="assets/img/edit-link.png" alt="A link's edit screen with its cloaked link, shortcode, slug and affiliate URL." width="938" height="521" loading="lazy"></figure>
+		<ul>
+			<li><strong>Anywhere:</strong> share the cloaked URL in emails, social posts and ads.</li>
+			<li><strong>In posts and pages:</strong> paste the shortcode. Change the link text by wrapping it: <code>[alc_link slug="ai-video-studio"]Try it free[/alc_link]</code>.</li>
+			<li><strong>Change the address:</strong> edit the <strong>Slug</strong> on the edit screen. Links you've already shared stop working if you do, so change it before sharing.</li>
+		</ul>
+		<p>Shortcode links get <code>rel="nofollow sponsored"</code> and open in a new tab, which you can change in Settings.</p>
+
+		<h2 id="subids">Sub-IDs</h2>
+		<p>Add anything after the link to see where clicks come from: <code>yoursite.com/go/ai-video-studio/facebook/</code>. Sub-IDs show in your click log. JVZoo links also pass them to JVZoo as <code>?tid=facebook</code>, so they appear in your JVZoo stats. In a shortcode, use <code>subid="sidebar"</code>.</p>
+
+		<h2 id="sync">Sync and dead offers</h2>
+		<p>Twice a day, the plugin checks your WarriorPlus offers. It updates affiliate links and offer names, unless you renamed the link, and flags links you can no longer earn from because you were paused or banned, or the offer ended. You can also click <strong>Sync existing links now</strong> on the Import Offers screen.</p>
+		<p>Set a <strong>Fallback URL</strong> in Settings, such as a page with your current recommendations, and clicks on those links go there instead.</p>
+
+		<h2 id="settings">Settings</h2>
+		<table class="plain">
+			<tr><th>Link prefix</th><td>The <code>go</code> in <code>/go/offer/</code>. Changing it breaks links you've already shared.</td></tr>
+			<tr><th>Fallback URL</th><td>Where clicks on dead offers go.</td></tr>
+			<tr><th>Default redirect</th><td>307 is recommended. 301 can be cached by browsers, so changes may not reach people who've clicked before.</td></tr>
+			<tr><th>Shortcode links</th><td><code>nofollow</code>, <code>sponsored</code> and opening in a new tab.</td></tr>
+			<tr><th>Tracking</th><td>Count clicks, ignore bots, and pass query strings through to the offer.</td></tr>
+			<tr><th>Uninstall</th><td>Whether deleting the plugin also deletes your links and click history.</td></tr>
+		</table>
+
+		<h2 id="updating">Updating</h2>
+		<p>Download the new zip and upload it under <strong>Plugins → Add New → Upload Plugin</strong>. When WordPress asks, choose <strong>Replace current with uploaded</strong>. Your links, clicks and settings are kept, and any data changes run automatically.</p>
+
+		<h2 id="uninstall">Uninstalling</h2>
+		<p>Deactivating keeps everything. Deleting the plugin only removes your links, click history and settings if you ticked <strong>Delete all links…</strong> under Settings → Uninstall first.</p>
+	</article>
+</div>
+</main>
+<footer class="site-footer">
+	<div class="wrap">
+		<p>Affiliate Link Cloaker · GPL-2.0-or-later · Built on <a href="https://bignall.github.io/wp-foundation/">WP Foundation</a></p>
+		<p>By <a href="https://rosinabignall.com/">Rosina Bignall</a> · <a href="https://github.com/bignall/aff-link-cloaker">Source on GitHub</a></p>
+	</div>
+</footer>
+</body>
+</html>

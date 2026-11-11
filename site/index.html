@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Affiliate Link Cloaker – cloaked affiliate links for WordPress</title>
+	<meta name="description" content="A WordPress plugin that imports your WarriorPlus and JVZoo offers and turns them into short, trackable links on your own site.">
+	<meta property="og:title" content="Affiliate Link Cloaker – cloaked affiliate links for WordPress">
+	<meta property="og:description" content="A WordPress plugin that imports your WarriorPlus and JVZoo offers and turns them into short, trackable links on your own site.">
+	<meta property="og:image" content="https://bignall.github.io/aff-link-cloaker/assets/img/links-list.png">
+	<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+	<div class="wrap">
+		<a class="brand" href="index.html"><img src="assets/favicon.svg" alt="" width="28" height="28"> Affiliate Link Cloaker</a>
+		<nav class="nav" aria-label="Main">
+			<a href="index.html" aria-current="page">Home</a>
+			<a href="guide.html">Guide</a>
+			<a href="extension.html">JVZoo extension</a>
+			<a href="https://github.com/bignall/aff-link-cloaker/releases/latest">Download</a>
+			<a href="https://github.com/bignall/aff-link-cloaker">GitHub</a>
+		</nav>
+	</div>
+</header>
+<main id="main">
+<section class="hero">
+	<div class="wrap hero-inner">
+		<div>
+			<p class="eyebrow">WordPress plugin · WarriorPlus &amp; JVZoo</p>
+			<h1>Your affiliate offers, as clean links on your own site.</h1>
+			<p class="lead">Affiliate Link Cloaker pulls in the offers you're approved to promote and turns each one into a short, trackable link like <code>yoursite.com/go/ai-video-studio/</code>. Use it in posts, emails, social media and ads.</p>
+			<p class="actions">
+				<a class="btn btn-primary" href="https://github.com/bignall/aff-link-cloaker/releases/latest">Download the plugin</a>
+				<a class="btn" href="guide.html">Read the guide</a>
+			</p>
+			<p class="meta">Free · PHP 8.1+ · WordPress 6.4+ · GPL-2.0-or-later</p>
+		</div>
+		<figure class="shot"><img src="assets/img/links-list.png" alt="The Affiliate Links screen in WordPress: each link with its cloaked URL, shortcode, network, status and click counts." width="1260" height="1028"></figure>
+	</div>
+</section>
+
+<section class="section" aria-labelledby="features">
+	<div class="wrap">
+		<h2 id="features">Everything an affiliate link needs</h2>
+		<p class="section-lead">Import offers instead of copying links by hand, and keep them working after you've shared them.</p>
+		<div class="grid">
+			<div class="card"><h3>Import, don't copy</h3><p>See your WarriorPlus offers straight from its API, or let the browser extension read your approved JVZoo products. Tick the ones you want and every link is created at once.</p></div>
+			<div class="card"><h3>Links that stay current</h3><p>A twice-daily sync picks up changed affiliate links and renamed offers, and warns you when you've been paused or an offer has ended.</p></div>
+			<div class="card"><h3>Never send traffic nowhere</h3><p>Set a fallback page, and clicks on dead offers go there instead of to an offer that won't pay you.</p></div>
+			<div class="card"><h3>Know what's working</h3><p>Clicks per link for the last 7 and 30 days, with sub-IDs such as <code>/go/offer/facebook/</code> to see where they came from. Bots and link checkers aren't counted.</p></div>
+			<div class="card"><h3>Use them anywhere</h3><p>Copy the cloaked URL for emails and social posts, or the shortcode for your posts and pages. Both have a Copy button.</p></div>
+			<div class="card"><h3>Private and tidy</h3><p>IP addresses are stored only as hashes. Uninstalling removes everything, but only if you ask it to.</p></div>
+		</div>
+	</div>
+</section>
+
+<section class="section section-alt" aria-labelledby="networks">
+	<div class="wrap">
+		<h2 id="networks">Supported networks</h2>
+		<p class="section-lead">Links from any network can be pasted in by hand. These networks get extra help.</p>
+		<div class="networks">
+			<div class="card">
+				<h3>WarriorPlus</h3>
+				<p>Add your API key and the plugin lists every offer you're an affiliate for, with an <em>Approved only</em> filter. It uses the same link as WarriorPlus's "Get Link" button.</p>
+				<ul><li>One-click import from your offers list</li><li>Sync updates links, names and statuses</li><li>Flags offers you've been paused from</li></ul>
+			</div>
+			<div class="card">
+				<h3>JVZoo</h3>
+				<p>JVZoo's API only covers vendors, so the <a href="extension.html">browser extension</a> reads your Approved Products page while you're signed in and sends the products to your site.</p>
+				<ul><li>Product names filled in automatically</li><li>Sub-IDs passed to JVZoo as tracking IDs</li><li>The same product is never added twice</li></ul>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section" aria-labelledby="import">
+	<div class="wrap split">
+		<div>
+			<h2 id="import">Pick offers, get links</h2>
+			<ol class="steps">
+				<li><strong>Connect WarriorPlus.</strong> Paste your API key from WarriorPlus → My Account → API Key.</li>
+				<li><strong>Choose offers.</strong> Import Offers lists everything you're approved for, with vendor, status and launch date.</li>
+				<li><strong>Share the links.</strong> Each offer gets a cloaked link on your site, ready to copy.</li>
+			</ol>
+			<p><a href="guide.html#warriorplus">How to set up WarriorPlus →</a></p>
+		</div>
+		<figure class="shot"><img src="assets/img/import-warriorplus.png" alt="Import Offers: the WarriorPlus tab listing offers with vendor, status, launch date and cloaked link." width="1238" height="756" loading="lazy"></figure>
+	</div>
+</section>
+
+<section class="section section-alt" aria-labelledby="extension">
+	<div class="wrap split narrow-shot">
+		<div>
+			<h2 id="extension">JVZoo in one click</h2>
+			<p>The Affiliate Link Cloaker extension for Chrome, Edge and Brave reads your JVZoo Approved Products page while you're signed in. One click creates the cloaked links on your site. Your JVZoo login never leaves your browser.</p>
+			<p class="actions"><a class="btn btn-primary" href="extension.html">Set up the extension</a></p>
+		</div>
+		<figure class="shot ext-shot"><img src="assets/img/extension-results.png" alt="The extension after sending: two links created and one already on the site, each with its cloaked URL and a Copy button." width="380" height="429" loading="lazy"></figure>
+	</div>
+</section>
+
+<section class="section" aria-labelledby="start">
+	<div class="wrap">
+		<h2 id="start">Get started</h2>
+		<ol class="steps">
+			<li>Download <strong>aff-link-cloaker-x.y.z.zip</strong> from the <a href="https://github.com/bignall/aff-link-cloaker/releases/latest">latest release</a>.</li>
+			<li>In WordPress, go to <strong>Plugins → Add New → Upload Plugin</strong>, choose the zip, then <strong>Activate</strong>.</li>
+			<li>Follow the <a href="guide.html">guide</a> to connect your networks and create your first links.</li>
+		</ol>
+	</div>
+</section>
+</main>
+<footer class="site-footer">
+	<div class="wrap">
+		<p>Affiliate Link Cloaker · GPL-2.0-or-later · Built on <a href="https://bignall.github.io/wp-foundation/">WP Foundation</a></p>
+		<p>By <a href="https://rosinabignall.com/">Rosina Bignall</a> · <a href="https://github.com/bignall/aff-link-cloaker">Source on GitHub</a></p>
+	</div>
+</footer>
+</body>
+</html>
