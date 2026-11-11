@@ -4,7 +4,7 @@ Tags: affiliate, links, cloaking, redirect, warriorplus, jvzoo
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.1
-Stable tag: 0.3.1
+Stable tag: 0.4.0
 License: GPLv2 or later
 
 Pull your affiliate offers from WarriorPlus and JVZoo and turn them into short, cloaked, trackable links.
@@ -73,6 +73,11 @@ Without a notes file, GitHub generates notes from the commits.
 Strauss rewrites `use Bignall\WPFoundation\...` in src/ to `AffLinkCloaker\Vendor\Bignall\WPFoundation\...`; that's expected and committed.
 
 == Changelog ==
+
+= 0.4.0 =
+* Public API for other plugins: alc_cloaked_url(), alc_get_link_id(), alc_get_links(), alc_link_is_dead(), alc_click_counts() and alc_link_post_type(). Check function_exists( 'alc_api_version' ) before using them.
+* alc_click_counts() reports clicks by link, sub-ID and day, e.g. how many clicks each ad sent.
+* The clicks table gets an index on the sub-ID, so these reports stay fast.
 
 = 0.3.1 =
 * Browser extension 0.1.1: reads each product's name and your link from JVZoo's own "Get Link" boxes, so products are no longer named "Seller Information", and JVZoo's "Product of the day" banner is no longer picked up as one of your products.

@@ -3,7 +3,7 @@
  * Plugin Name:       Affiliate Link Cloaker
  * Plugin URI:        https://bignall.github.io/aff-link-cloaker/
  * Description:       Import your affiliate offers from WarriorPlus and JVZoo and turn them into short, cloaked, trackable redirect links you can use on this site or anywhere else.
- * Version:           0.3.1
+ * Version:           0.4.0
  * Requires at least: 6.4
  * Requires PHP:      8.1
  * Author:            Arbe
@@ -43,5 +43,7 @@ if ( file_exists( __DIR__ . '/vendor-prefixed/autoload.php' ) ) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 define( 'ALC_FILE', __FILE__ );
+
+require_once __DIR__ . '/src/api.php';
 
 AffLinkCloaker\Bootstrap::plugin( __FILE__ )->boot();

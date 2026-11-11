@@ -49,6 +49,88 @@ final class Clicks {
 		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE link_id = %d AND clicked_at >= %s", $link_id, $since ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
 	}
 
+	/**
+	 * Click counts, filtered and grouped. Backs alc_click_counts().
+	 *
+	 * @param array<string, mixed> $args See alc_click_counts().
+	 * @return list<array<string, int|string>>
+	 */
+	public static function grouped( array $args = array() ): array {
+		global $wpdb;
+
+		$columns = array(
+			'link'  => 'link_id',
+			'subid' => 'subid',
+			'day'   => 'DATE(clicked_at)',
+		);
+		$aliases = array(
+			'link'  => 'link_id',
+			'subid' => 'subid',
+			'day'   => 'day',
+		);
+		$group   = array_values( array_intersect( array_keys( $columns ), (array) ( $args['group_by'] ?? array() ) ) );
+
+		$where  = array( '1=1' );
+		$params = array();
+		if ( ! empty( $args['link_id'] ) ) {
+			$where[]  = 'link_id = %d';
+			$params[] = (int) $args['link_id'];
+		}
+		if ( isset( $args['subid'] ) && '' !== $args['subid'] ) {
+			$where[]  = 'subid = %s';
+			$params[] = (string) $args['subid'];
+		} elseif ( isset( $args['subid_prefix'] ) && '' !== $args['subid_prefix'] ) {
+			$where[]  = 'subid LIKE %s';
+			$params[] = $wpdb->esc_like( (string) $args['subid_prefix'] ) . '%';
+		}
+		foreach ( array( 'since' => '>=', 'until' => '<=' ) as $key => $op ) {
+			$time = self::boundary( (string) ( $args[ $key ] ?? '' ), 'until' === $key );
+			if ( '' !== $time ) {
+				$where[]  = "clicked_at {$op} %s";
+				$params[] = $time;
+			}
+		}
+
+		$select = array();
+		foreach ( $group as $g ) {
+			$select[] = $columns[ $g ] . ' AS ' . $aliases[ $g ];
+		}
+		$select[] = 'COUNT(*) AS clicks';
+
+		$table = self::table();
+		$sql   = 'SELECT ' . implode( ', ', $select ) . " FROM {$table} WHERE " . implode( ' AND ', $where );
+		if ( $group ) {
+			$by   = implode( ', ', array_map( static fn ( string $g ): string => $aliases[ $g ], $group ) );
+			$sql .= " GROUP BY {$by} ORDER BY {$by}";
+		}
+		if ( $params ) {
+			$sql = $wpdb->prepare( $sql, $params ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		}
+		$rows = (array) $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery
+
+		$out = array();
+		foreach ( $rows as $row ) {
+			$item = array();
+			foreach ( $group as $g ) {
+				$item[ $aliases[ $g ] ] = 'link' === $g ? (int) $row['link_id'] : (string) $row[ $aliases[ $g ] ];
+			}
+			$item['clicks'] = (int) $row['clicks'];
+			$out[]          = $item;
+		}
+		return $out;
+	}
+
+	/** A date or datetime as a UTC datetime; a bare "until" date covers that whole day. */
+	private static function boundary( string $value, bool $end ): string {
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $value ) ) {
+			return $value . ( $end ? ' 23:59:59' : ' 00:00:00' );
+		}
+		if ( preg_match( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value ) ) {
+			return $value;
+		}
+		return '';
+	}
+
 	public static function deleteForLink( int $link_id ): void {
 		global $wpdb;
 		$wpdb->delete( self::table(), array( 'link_id' => $link_id ), array( '%d' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery

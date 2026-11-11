@@ -27,6 +27,7 @@ ip_hash char(64) NOT NULL DEFAULT '',
 user_agent varchar(255) NOT NULL DEFAULT '',
 PRIMARY KEY  (id),
 KEY link_id (link_id),
+KEY subid (subid),
 KEY clicked_at (clicked_at)";
 	}
 }
