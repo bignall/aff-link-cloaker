@@ -281,22 +281,15 @@ final class ImportPage {
 		$rows = array_slice( Importer::parsePasted( $text ), 0, self::PASTE_MAX );
 
 		$results = array();
-		foreach ( $rows as $row ) {
-			$url = preg_match( '#^https?://#i', $row['url'] ) ? esc_url_raw( $row['url'], array( 'http', 'https' ) ) : '';
-			if ( ! Links::isValidDestination( $url ) ) {
-				$results[] = array( new Offer( '', '', $row['name'], $row['url'] ), new \WP_Error( 'alc_bad_url', __( 'Not a valid http(s) link.', 'aff-link-cloaker' ) ) );
-				continue;
-			}
-			$offer = App::instance()->sources->offerFromUrl( $url, $row['name'] );
-			if ( is_wp_error( $offer ) ) {
-				$results[] = array( new Offer( '', '', $row['name'], $url ), $offer );
-				continue;
-			}
-			if ( Links::findExisting( $offer->source, $offer->offerId, $offer->affiliateUrl ) ) {
-				$results[] = array( $offer, new \WP_Error( 'alc_exists', __( 'Already has a cloaked link; skipped.', 'aff-link-cloaker' ) ) );
-				continue;
-			}
-			$results[] = array( $offer, Importer::save( $offer, self::postedOptions() + array( 'custom_name' => '' !== $row['name'] ) ) );
+		foreach ( Importer::importLinks( $rows, self::postedOptions() ) as $r ) {
+			$results[] = array(
+				$r['offer'],
+				match ( $r['status'] ) {
+					'created' => array( 'post_id' => $r['post_id'], 'created' => true ),
+					'exists'  => new \WP_Error( 'alc_exists', __( 'Already has a cloaked link; skipped.', 'aff-link-cloaker' ) ),
+					default   => $r['error'] ?? new \WP_Error( 'alc_error', __( 'Could not import.', 'aff-link-cloaker' ) ),
+				},
+			);
 		}
 		self::flashResults( $results );
 		wp_safe_redirect( self::url( array( 'tab' => 'paste' ) ) );

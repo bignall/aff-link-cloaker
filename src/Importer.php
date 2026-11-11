@@ -110,6 +110,48 @@ final class Importer {
 	}
 
 	/**
+	 * Import a list of affiliate links (from the Paste tab or the REST API).
+	 *
+	 * @param list<array{url: string, name: string}>          $rows    Links with optional names.
+	 * @param array{status?: string, category?: int}           $options Post status and category.
+	 * @return list<array{offer: Offer, status: string, post_id: int, error: ?WP_Error}>
+	 *         status is "created", "exists" (post_id is the existing link) or "error".
+	 */
+	public static function importLinks( array $rows, array $options = array() ): array {
+		$results = array();
+		foreach ( $rows as $row ) {
+			$raw  = trim( (string) ( $row['url'] ?? '' ) );
+			$name = trim( (string) ( $row['name'] ?? '' ) );
+			$url  = preg_match( '#^https?://#i', $raw ) ? esc_url_raw( $raw, array( 'http', 'https' ) ) : '';
+
+			if ( ! Links::isValidDestination( $url ) ) {
+				$results[] = self::result( new Offer( '', '', $name, $raw ), 'error', 0, new WP_Error( 'alc_bad_url', __( 'Not a valid http(s) link.', 'aff-link-cloaker' ) ) );
+				continue;
+			}
+			$offer = App::instance()->sources->offerFromUrl( $url, $name );
+			if ( is_wp_error( $offer ) ) {
+				$results[] = self::result( new Offer( '', '', $name, $url ), 'error', 0, $offer );
+				continue;
+			}
+			$existing = Links::findExisting( $offer->source, $offer->offerId, $offer->affiliateUrl );
+			if ( $existing ) {
+				$results[] = self::result( $offer, 'exists', $existing );
+				continue;
+			}
+			$saved = self::save( $offer, $options + array( 'custom_name' => '' !== $name ) );
+			$results[] = is_wp_error( $saved )
+				? self::result( $offer, 'error', 0, $saved )
+				: self::result( $offer, 'created', $saved['post_id'] );
+		}
+		return $results;
+	}
+
+	/** @return array{offer: Offer, status: string, post_id: int, error: ?WP_Error} */
+	private static function result( Offer $offer, string $status, int $post_id = 0, ?WP_Error $error = null ): array {
+		return compact( 'offer', 'status', 'post_id', 'error' );
+	}
+
+	/**
 	 * Parse pasted links, one per line: `URL` or `Name | URL` (either order).
 	 *
 	 * @return list<array{url: string, name: string}>

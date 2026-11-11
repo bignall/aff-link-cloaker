@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="ui.css">
+</head>
+<body class="alc-popup">
+	<header>
+		<strong>Affiliate Link Cloaker</strong>
+		<a href="#" id="openOptions">Settings</a>
+	</header>
+
+	<section id="notConfigured" hidden>
+		<p>Connect your WordPress site first.</p>
+		<button id="setup" class="primary">Open settings</button>
+	</section>
+
+	<section id="main" hidden>
+		<p id="pageHint" class="hint"></p>
+		<div class="actions">
+			<button id="scan" class="primary">Scan this page</button>
+			<button id="clear" hidden>Clear list</button>
+		</div>
+		<p id="scanStatus" role="status"></p>
+
+		<div id="listWrap" hidden>
+			<label class="check-all"><input type="checkbox" id="checkAll" checked> <span id="count"></span></label>
+			<ul id="list"></ul>
+			<label class="inline"><input type="checkbox" id="draft"> Create as drafts</label>
+			<div class="actions">
+				<button id="send" class="primary">Create cloaked links</button>
+			</div>
+		</div>
+
+		<div id="resultsWrap" hidden>
+			<p id="summary" role="status"></p>
+			<ul id="results"></ul>
+		</div>
+	</section>
+
+	<script src="api.js"></script>
+	<script src="scrape.js"></script>
+	<script src="popup.js"></script>
+</body>
+</html>

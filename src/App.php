@@ -40,6 +40,7 @@ final class App {
 		Redirector::init();
 		Shortcode::init();
 		Sync::init();
+		Rest::init();
 		Settings::init( $plugin );
 
 		if ( is_admin() ) {

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Affiliate Link Cloaker – Settings</title>
+	<link rel="stylesheet" href="ui.css">
+</head>
+<body class="alc-options">
+	<main>
+		<h1>Affiliate Link Cloaker</h1>
+		<p class="lead">Connect the extension to your WordPress site so it can create cloaked links for the JVZoo products you're approved to promote.</p>
+
+		<form id="settings">
+			<label for="siteUrl">WordPress site address</label>
+			<input id="siteUrl" type="url" placeholder="https://example.com" required>
+
+			<label for="username">WordPress user name</label>
+			<input id="username" type="text" autocomplete="username" required>
+
+			<label for="appPassword">Application Password</label>
+			<input id="appPassword" type="password" autocomplete="new-password" placeholder="xxxx xxxx xxxx xxxx xxxx xxxx">
+			<p class="hint">Create one in WordPress under <strong>Users → Profile → Application Passwords</strong> (name it "Link Cloaker extension"). It only works over HTTPS. Leave blank to keep the saved one. It's stored in this browser only.</p>
+
+			<label for="affiliateId">Your JVZoo affiliate ID <span class="optional">(optional)</span></label>
+			<input id="affiliateId" type="text" inputmode="numeric" pattern="\d*" placeholder="Found automatically from links on the page">
+			<p class="hint">The first number in your JVZoo links: https://www.jvzoo.com/c/<strong>12345</strong>/67890. Only needed if a page shows products but none of your links.</p>
+
+			<div class="actions">
+				<button type="submit" class="primary">Save &amp; test connection</button>
+			</div>
+			<p id="result" role="status"></p>
+		</form>
+	</main>
+	<script src="api.js"></script>
+	<script src="options.js"></script>
+</body>
+</html>

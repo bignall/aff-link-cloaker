@@ -43,6 +43,10 @@ jobs:
       - name: Build zip
         run: bin/build-zip.sh
 
+      - name: Build browser extension zip
+        id: extension
+        run: echo "zip=$(bin/build-extension-zip.sh)" >> "$GITHUB_OUTPUT"
+
       - name: Smoke-check the zip
         run: |
           ZIP="dist/aff-link-cloaker-${{ steps.version.outputs.version }}.zip"
@@ -59,6 +63,7 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME}"
           ZIP="dist/aff-link-cloaker-${{ steps.version.outputs.version }}.zip"
+          EXTENSION_ZIP="${{ steps.extension.outputs.zip }}"
           # Title from the notes file's "# Heading" (else the tag); body is the rest of the file.
           BODY="${RUNNER_TEMP}/release-notes.md"
           set +e
@@ -73,7 +78,7 @@ jobs:
           echo "Release title: ${TITLE}"
           if gh release view "$TAG" > /dev/null 2>&1; then
             # Release already exists (e.g. created by hand): keep its title and notes, (re)attach the zip.
-            gh release upload "$TAG" "$ZIP" --clobber
+            gh release upload "$TAG" "$ZIP" "$EXTENSION_ZIP" --clobber
           else
-            gh release create "$TAG" "$ZIP" --verify-tag --title "$TITLE" "${NOTES[@]}"
+            gh release create "$TAG" "$ZIP" "$EXTENSION_ZIP" --verify-tag --title "$TITLE" "${NOTES[@]}"
           fi
