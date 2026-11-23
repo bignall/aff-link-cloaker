@@ -6,7 +6,8 @@
  * Version:           0.3.1
  * Requires at least: 6.4
  * Requires PHP:      8.1
- * Author:            Arbe
+ * Author:            RB Creative Solutions
+ * Author URI:        https://rbcreativesolutions.net/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       aff-link-cloaker

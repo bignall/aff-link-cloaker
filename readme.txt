@@ -1,5 +1,5 @@
 === Affiliate Link Cloaker ===
-Contributors: arbe
+Contributors: bignall
 Tags: affiliate, links, cloaking, redirect, warriorplus, jvzoo
 Requires at least: 6.4
 Tested up to: 6.8
