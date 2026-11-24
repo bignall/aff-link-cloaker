@@ -21,7 +21,7 @@ composer dump-autoload --no-dev --classmap-authoritative --quiet
 find vendor -mindepth 1 -maxdepth 1 ! -name autoload.php ! -name composer -exec rm -rf {} +
 # composer/* dev packages (Strauss needs composer/composer) also live in vendor/composer/.
 find vendor/composer -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
-rm -f composer.json composer.lock
+# composer.json stays in the zip: WordPress.org asks for it when vendor/ is included.
 
 # Fail the build if an unprefixed copy of the library slipped in.
 if grep -rq "namespace Bignall\\\\WPFoundation" vendor vendor-prefixed 2>/dev/null; then

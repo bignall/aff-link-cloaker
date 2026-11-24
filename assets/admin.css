@@ -14,3 +14,4 @@
 .alc-toolbar { clear: both; display: flex; gap: 8px; align-items: center; margin: 8px 0 12px; }
 .alc-offers .alc-col-wide { width: 34%; }
 .alc-import-options { display: flex; gap: 16px; align-items: center; }
+.alc-companions { margin-top: 32px; padding-top: 12px; border-top: 1px solid #dcdcde; max-width: 800px; color: #50575e; }

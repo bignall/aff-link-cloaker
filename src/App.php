@@ -34,7 +34,6 @@ final class App {
 
 		self::$instance = new self( $plugin, $sources );
 
-		load_plugin_textdomain( 'aff-link-cloaker', false, dirname( $plugin->basename() ) . '/languages' );
 
 		Links::init();
 		Redirector::init();

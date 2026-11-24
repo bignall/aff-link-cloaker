@@ -25,6 +25,7 @@ final class SettingsPage {
 		add_action( 'admin_menu', array( self::class, 'menu' ) );
 		add_action( 'admin_post_alc_test_api', array( self::class, 'handleTest' ) );
 		add_filter( 'plugin_action_links_' . $plugin->basename(), array( self::class, 'pluginLinks' ) );
+		add_filter( 'plugin_row_meta', array( self::class, 'rowMeta' ), 10, 2 );
 	}
 
 	private static function url(): string {
@@ -42,6 +43,66 @@ final class SettingsPage {
 	public static function pluginLinks( array $links ): array {
 		array_unshift( $links, '<a href="' . esc_url( self::url() ) . '">' . esc_html__( 'Settings', 'aff-link-cloaker' ) . '</a>' );
 		return $links;
+	}
+
+	/**
+	 * A "Where to Buy Pro" link under the description on the Plugins screen, until Pro is active.
+	 *
+	 * @param array<int|string, string> $meta Row meta links.
+	 * @param string                    $file Plugin file of the row.
+	 * @return array<int|string, string>
+	 */
+	public static function rowMeta( array $meta, string $file ): array {
+		if ( $file === self::$plugin->basename() && ! self::active( 'where-to-buy-pro/where-to-buy-pro.php' ) ) {
+			$meta[] = self::external( self::PRO_URL, __( 'Where to Buy Pro', 'aff-link-cloaker' ) );
+		}
+		return $meta;
+	}
+
+	private const WTB_URL = 'https://bignall.github.io/where-to-buy/';
+	private const PRO_URL = 'https://rbcreativesolutions.net/where-to-buy-pro/';
+
+	private static function active( string $file ): bool {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		return is_plugin_active( $file );
+	}
+
+	private static function external( string $url, string $text ): string {
+		return sprintf(
+			'<a href="%1$s" target="_blank" rel="noopener">%2$s<span class="screen-reader-text"> %3$s</span></a>',
+			esc_url( $url ),
+			esc_html( $text ),
+			esc_html__( '(opens in a new tab)', 'aff-link-cloaker' )
+		);
+	}
+
+	/** A short note at the bottom of Settings about Where to Buy and its Pro add-on. Hidden once Pro is active. */
+	private static function companions(): void {
+		if ( self::active( 'where-to-buy-pro/where-to-buy-pro.php' ) ) {
+			return;
+		}
+		$wtb = self::active( 'where-to-buy/where-to-buy.php' );
+		?>
+		<p class="alc-companions">
+			<?php
+			if ( ! $wtb ) {
+				printf(
+					/* translators: %s: link to Where to Buy. */
+					esc_html__( 'Recommending products? %s (free) shows a photo, a short description and a button for each store, and can use these cloaked links.', 'aff-link-cloaker' ),
+					self::external( self::WTB_URL, __( 'Where to Buy', 'aff-link-cloaker' ) ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in external().
+				);
+				echo ' ';
+			}
+			printf(
+				/* translators: %s: link to Where to Buy Pro. */
+				esc_html__( '%s turns your WarriorPlus and JVZoo offers into Where to Buy items in one step and counts clicks for each item.', 'aff-link-cloaker' ),
+				self::external( self::PRO_URL, __( 'Where to Buy Pro', 'aff-link-cloaker' ) ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in external().
+			);
+			?>
+		</p>
+		<?php
 	}
 
 	public static function handleTest(): void {
@@ -179,6 +240,8 @@ final class SettingsPage {
 					<?php submit_button( __( 'Test WarriorPlus connection', 'aff-link-cloaker' ), 'secondary', 'submit', false ); ?>
 				</form>
 			<?php endif; ?>
+
+			<?php self::companions(); ?>
 		</div>
 		<?php
 	}

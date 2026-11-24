@@ -46,7 +46,7 @@ final class Clicks {
 		}
 		$table = self::table();
 		$since = gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS );
-		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE link_id = %d AND clicked_at >= %s", $link_id, $since ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
+		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE link_id = %d AND clicked_at >= %s', $table, $link_id, $since ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 	}
 
 	public static function deleteForLink( int $link_id ): void {
@@ -56,7 +56,7 @@ final class Clicks {
 
 	public static function shouldCount(): bool {
 		$settings = Settings::all();
-		if ( ! $settings['track_clicks'] || 'HEAD' === ( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
+		if ( ! $settings['track_clicks'] || 'HEAD' === sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) {
 			return false;
 		}
 		return ! ( $settings['ignore_bots'] && self::isBot() );

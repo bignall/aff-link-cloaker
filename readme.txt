@@ -1,10 +1,10 @@
 === Affiliate Link Cloaker ===
 Contributors: bignall
-Tags: affiliate, links, cloaking, redirect, warriorplus, jvzoo
+Tags: affiliate, links, cloaking, warriorplus, jvzoo
 Requires at least: 6.4
-Tested up to: 6.8
+Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.3.1
+Stable tag: 0.4.0
 License: GPLv2 or later
 
 Pull your affiliate offers from WarriorPlus and JVZoo and turn them into short, cloaked, trackable links.
@@ -16,7 +16,7 @@ Website and guide: https://bignall.github.io/aff-link-cloaker/
 * Lists every WarriorPlus offer you're an affiliate for, straight from the WarriorPlus V2 API, with an "Approved only" filter. Tick the offers you want and get a cloaked link for each, e.g. https://yoursite.com/go/ai-video-maker/
 * The affiliate URL is the same one WarriorPlus's "Get Link" button shows (the API's promote_url). No scraping, no WarriorPlus login stored.
 * JVZoo: paste your JVZoo affiliate links (https://www.jvzoo.com/c/<affiliate>/<product>, or the jvz1.com–jvz9.com short links). Product names are filled in from JVZoo, and sub-IDs are passed to JVZoo as its tracking ID (?tid=), so they show up in your JVZoo stats. JVZoo's API only covers vendors' own products, so JVZoo offers can't be listed automatically.
-* Browser extension for JVZoo: while you're signed in to JVZoo, it reads your Approved Products page and creates the cloaked links on your site in one click. See browser-extension/README.md.
+* Browser extension for JVZoo: while you're signed in to JVZoo, it reads your Approved Products page and creates the cloaked links on your site in one click. See the website for how to install it: https://bignall.github.io/aff-link-cloaker/
 * Or paste a list of affiliate links from any network, one per line ("Name | URL" or just the URL). A network page pasted by mistake (a sales or offer page instead of your affiliate link) is rejected with an explanation.
 * Twice-daily sync (WP-Cron): picks up changed affiliate URLs and renamed offers, flags links whose offer you've been paused or banned from or that has ended, and optionally creates links for newly approved offers.
 * Fallback URL: send clicks on dead offers somewhere useful instead of a page that won't pay you.
@@ -27,10 +27,14 @@ Website and guide: https://bignall.github.io/aff-link-cloaker/
 
 == Installation ==
 
-1. Install the release zip (Plugins → Add New → Upload), or from source run `composer install` in the plugin folder.
+1. Install from Plugins → Add New, or upload the zip.
 2. Affiliate Links → Settings: paste your WarriorPlus API key (WarriorPlus → My Account → API Key, https://warriorplus.com/account/api). To keep it out of the database, add `define( 'ALC_WARRIORPLUS_API_KEY', '...' );` to wp-config.php instead. Click "Test WarriorPlus connection".
 3. Affiliate Links → Import Offers → WarriorPlus: tick offers, click "Create cloaked links for selected offers".
 4. Use pretty permalinks (anything but "Plain") for /go/slug/ URLs; with plain permalinks links fall back to ?alc=slug.
+
+== Works with Where to Buy ==
+
+[Where to Buy](https://bignall.github.io/where-to-buy/) (free) shows the things you recommend with a photo, a short description and a button for each store, and any store can use one of your cloaked links. [Where to Buy Pro](https://rbcreativesolutions.net/where-to-buy-pro/), a paid add-on from RB Creative Solutions, turns your WarriorPlus and JVZoo offers into Where to Buy items in one step and counts clicks for each item.
 
 == Shortcode ==
 
@@ -59,6 +63,15 @@ Links get the same checks as the Paste tab, and existing links are reported, not
 * The WarriorPlus V2 API is marked beta by WarriorPlus.
 * "Cloaking" here means a branded redirect URL. Keep your affiliate disclosures, and check the rules of any ad platform you post these links on.
 
+== External services ==
+
+Affiliate Link Cloaker talks to two outside services, only for the features you use:
+
+* **WarriorPlus API** (warriorplus.com). When you add a WarriorPlus API key, the plugin sends it to WarriorPlus to list your affiliate offers and their links: when you open Import Offers, click Refresh or Test connection, and during the twice-daily sync. Nothing else about your site or visitors is sent. WarriorPlus terms: https://warriorplus.com/legal/tos and privacy policy: https://warriorplus.com/legal/privacy
+* **JVZoo** (jvzoo.com). When you paste a JVZoo link, the plugin loads that product's public JVZoo page to read its name. Only the product number is sent, as part of the page address. JVZoo terms: https://www.jvzoo.com/terms and privacy policy: https://www.jvzoo.com/privacy
+
+Visitors who click a cloaked link are redirected to the address you set; the plugin itself sends nothing about them anywhere. Clicks are counted on your own site, with IP addresses stored only as salted hashes.
+
 == Development ==
 
     composer install          # also prefixes WP Foundation into vendor-prefixed/ with Strauss
@@ -73,6 +86,10 @@ Without a notes file, GitHub generates notes from the commits.
 Strauss rewrites `use Bignall\WPFoundation\...` in src/ to `AffLinkCloaker\Vendor\Bignall\WPFoundation\...`; that's expected and committed.
 
 == Changelog ==
+
+= 0.4.0 =
+* Ready for WordPress.org: tested with WordPress 7.1, an External services section in this readme, and fixes from Plugin Check.
+* A short note at the bottom of Settings, and a link on the Plugins screen, about Where to Buy and its Pro add-on. Hidden once Where to Buy Pro is active.
 
 = 0.3.1 =
 * Browser extension 0.1.1: reads each product's name and your link from JVZoo's own "Get Link" boxes, so products are no longer named "Seller Information", and JVZoo's "Product of the day" banner is no longer picked up as one of your products.

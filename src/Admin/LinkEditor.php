@@ -181,13 +181,13 @@ final class LinkEditor {
 
 	public static function renderStats( WP_Post $post ): void {
 		printf(
-			'<p>%s <strong>%d</strong><br>%s <strong>%d</strong><br>%s <strong>%d</strong></p>',
+			'<p>%s <strong>%s</strong><br>%s <strong>%s</strong><br>%s <strong>%s</strong></p>',
 			esc_html__( 'Total:', 'aff-link-cloaker' ),
-			Clicks::count( $post->ID ),
+			esc_html( number_format_i18n( Clicks::count( $post->ID ) ) ),
 			esc_html__( 'Last 30 days:', 'aff-link-cloaker' ),
-			Clicks::count( $post->ID, 30 ),
+			esc_html( number_format_i18n( Clicks::count( $post->ID, 30 ) ) ),
 			esc_html__( 'Last 7 days:', 'aff-link-cloaker' ),
-			Clicks::count( $post->ID, 7 )
+			esc_html( number_format_i18n( Clicks::count( $post->ID, 7 ) ) )
 		);
 	}
 

@@ -158,7 +158,6 @@ final class Links {
 				'name'             => sanitize_title( $slug ),
 				'post_status'      => 'publish',
 				'numberposts'      => 1,
-				'suppress_filters' => true,
 			)
 		);
 		return $posts[0] ?? null;
